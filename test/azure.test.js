@@ -14,6 +14,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Adobe.
  **************************************************************************/
+/* eslint-env mocha */
 
 'use strict';
 
@@ -22,71 +23,119 @@ const os = require('os');
 const fs = require('fs');
 
 const yaml = require('js-yaml');
+const assert = require('assert');
 
 const azure = require('../lib/azure.js').ContainerAzure;
 
-/* Cosmetic */
-const textRed = "\x1b[31m";
-const textGreen = "\x1b[32m";
-const textReset = "\x1b[0m";
 
-/* Test URL to copy asset from */
-const sourceUrl = "https://adobesampleassetsrepo.blob.core.windows.net/adobe-sample-asset-repository/documents/txt/00_README.txt?sp=r&st=2019-10-16T14:00:00Z&se=2019-10-17T05:00:00Z&spr=https&sv=2018-03-28&sig=AVvnq2cqGad4LVU%2BFarlWqmGZK0Flr8Fcm9%2Fr0Jdpxw%3D&sr=b";
-const destinationBlob = "node-cloudstorage-test-results/";
-const storageContainerName = "nui-automation";
+describe('Azure Test', function () {
 
-/* Loads storage credentials from local file or ENV pointing to a YAML file containing cloud storage credentials */
-const storageCredentials = loadYaml(process.env.NUI_CREDENTIALS_YAML || path.join(os.homedir(), ".nui/credentials.yaml"));
-const storageContainer = new azure(storageCredentials.azure, storageContainerName);
+    const sourceBlob = "documents/txt/00_README.txt";
+    const sourceStorageContainerName = "adobe-sample-asset-repository";
+    const sourceLocalFile = `${__dirname}/resources/test.csv`;
+    const targetStorageContainerName = "nui-automation";
 
-/* Tests to run */
-testUploadFromStream();
-testValidate();
+    let sourceAssetUrl;
+    let sourceStorageContainer;
+    let targetBlob = "nui-repo-unit-tests/results/node-cloudstorage/";
+    let targetStorageContainer;
+    let blob;
+    let localFile;
 
+    /* Create destination blob prefix for run */
+    let date = new Date();
+    date = `${(date.getMonth() + 1)}-${(date.getDate() + 1)}-${date.getHours()}-${date.getMinutes()}`;
+    const scriptName = __filename.split(`${__dirname}/`).pop();
 
-async function testUploadFromStream() { /* Tests listObjects(), upload() */
+    targetBlob = `${targetBlob}${scriptName}/${date}/`;
 
-    const blob = destinationBlob + new Date().getTime() + ".txt"
-    try { /* Should output `PASS` */
-        await storageContainer.upload(sourceUrl, blob);
+    before("Check Azure Credentials", function (done) {
+        try {
+            /* Loads storage credentials from local file or ENV pointing to a YAML file containing cloud storage credentials */
+            if (!process.env.AZURE_STORAGE_KEY && !process.env.AZURE_STORAGE_ACCOUNT) {
 
-        const result = await storageContainer.listObjects(blob);
+                const credentialFile = process.env.NUI_CREDENTIALS_YAML || path.join(os.homedir(), ".nui/credentials.yaml");
+                console.log(`  INFO: AZURE_STORAGE_KEY and/or AZURE_STORAGE_ACCOUNT are not set, trying file: ${credentialFile}\n`);
 
-        if (result[0].name == blob) {
-            console.log(`${textGreen}PASS${textReset}`);
-        } else {
-            console.error(`${textRed}FAILED Uploading Blob: ${textReset}${blob}`);
+                if (fs.existsSync(credentialFile)) {
+
+                    const storageCredentials = yaml.safeLoad(fs.readFileSync(credentialFile, 'utf8'));
+                    process.env.AZURE_STORAGE_KEY = storageCredentials.azure.accountKey;
+                    process.env.AZURE_STORAGE_ACCOUNT = storageCredentials.azure.accountName;
+                }
+            }
+
+            /* Create source storage container object */
+            sourceStorageContainer = new azure({
+                    accountKey: process.env.AZURE_STORAGE_KEY,
+                    accountName: process.env.AZURE_STORAGE_ACCOUNT},
+                sourceStorageContainerName);
+
+            sourceAssetUrl = sourceStorageContainer.presignGet(sourceBlob, 600000);
+
+            /* Create target storage container object */
+            targetStorageContainer = new azure({
+                    accountKey: process.env.AZURE_STORAGE_KEY,
+                    accountName: process.env.AZURE_STORAGE_ACCOUNT},
+                targetStorageContainerName);
+
+        } catch (err) {
+            this.skip();
         }
-    } catch (err) {
-        console.error(`${textRed}${err}${textReset}`);
-    }
-}
+        return done();
+    });
 
-async function testValidate() { /* Tests validate() */
+    beforeEach("Build destinations", function (done) {
 
-    const blob = destinationBlob + new Date().getTime() + ".txt"
+        blob = `${targetBlob}${new Date().getTime()}`;
+        localFile = `${__dirname}/resources/${new Date().getTime()}`;
+        return done();
+    });
 
-    try { /* Should output `PASS` */
-        await storageContainer.upload(sourceUrl, blob);
-        const result = await storageContainer.validate();
+    describe("#uploadFromStream()", function () {
 
-        if (result._response.status == 200) {
-            console.log(`${textGreen}PASS${textReset}`);
-        } else {
-            console.error(`${textRed}FAILED To Get ACL${textReset}`);
-        }
-    } catch (err) {
-        console.error(`${textRed}${err}${textReset}`);
-    }
-}
+        it("Positive", async function () {
 
+            blob = `${blob}.txt`;
+            await targetStorageContainer.uploadFromStream(sourceAssetUrl, blob);
+            const result = await targetStorageContainer.listObjects(blob);
+            assert.equal(result[0].name, blob, `Uploaded blob ${result[0].name} should exist in destination: ${blob}`);
+        });
+    });
 
-/* Utility */
-function loadYaml(file) {
+    describe("#uploadFromFile()", function () {
 
-    try {
-        return yaml.safeLoad(fs.readFileSync(file, 'utf8'));
-    } catch (err) {
-        console.log(err);
-    }
-}
+        it("Positive", async function () {
+
+            blob = `${blob}.csv`;
+            await targetStorageContainer.uploadFromFile(sourceLocalFile, blob);
+            const result = await targetStorageContainer.listObjects(blob);
+            assert.equal(result[0].name, blob, `Uploaded blob ${result[0].name} should exist in destination: ${blob}`);
+        });
+    });
+
+    describe("#downloadBlob()", function () {
+
+        it("Positive", async function () {
+
+            const localDestinationFile = `${localFile}.txt`;
+            await sourceStorageContainer.downloadBlob(localDestinationFile, sourceBlob);
+            assert.equal(fs.existsSync(localDestinationFile), true, `Local file should exist: ${localDestinationFile}`);
+
+            const result = await sourceStorageContainer.listObjects(sourceBlob);
+            const stats = fs.statSync(localDestinationFile);
+            assert.equal(result[0].contentLength, stats.size, `Local file size ${stats.size} should match blob ${result[0].contentLength}`);
+
+            fs.unlinkSync(localDestinationFile);
+        });
+    });
+
+    describe("#validate()", function () {
+
+        it("Positive", async function () {
+
+            const result = await targetStorageContainer.validate();
+            assert.equal(result._response.status, 200, `HTTP status should be 200: Received ${result._response.status}`);
+        });
+    });
+});
