@@ -4,8 +4,7 @@
   "description": "Cloud Storage library",
   "dependencies": {
     "@azure/storage-blob": "^10.5.0",
-    "node-fetch": "^2.6.0",
-    "request": "^2.88.0"
+    "node-fetch": "^2.6.0"
   },
   "author": "Adobe Systems Inc. <nui@adobe.com>",
   "publishConfig": {
