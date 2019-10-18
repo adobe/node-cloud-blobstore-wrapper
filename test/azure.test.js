@@ -92,12 +92,12 @@ describe('Azure Test', function () {
         return done();
     });
 
-    describe("#uploadFromStream()", function () {
+    describe("#uploadFromUrl()", function () {
 
         it("Positive", async function () {
 
             blob = `${blob}.txt`;
-            await targetStorageContainer.uploadFromStream(sourceAssetUrl, blob);
+            await targetStorageContainer.uploadFromUrl(sourceAssetUrl, blob);
             const result = await targetStorageContainer.listObjects(blob);
             assert.equal(result[0].name, blob, `Uploaded blob ${result[0].name} should exist in destination: ${blob}`);
         });
