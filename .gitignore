@@ -2,3 +2,4 @@
 .webpack
 backup
 node_modules
+mocha.opts
