@@ -16,7 +16,8 @@
     "url": "https://git.corp.adobe.com/nui/node-cloudstorage.git"
   },
   "devDependencies": {
-    "@nui/eslint-config": "^1.0.2"
+    "@nui/eslint-config": "^1.0.2",
+    "mocha": "^6.2.1"
   },
   "scripts": {
     "pretest": "eslint ./",
