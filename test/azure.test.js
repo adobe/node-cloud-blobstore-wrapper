@@ -30,6 +30,9 @@ const azure = require('../lib/azure.js').ContainerAzure;
 
 describe('Azure Test', function () {
 
+    const DELIVERY_TIMEOUT = 30000; // max time to wait for test
+    this.timeout(DELIVERY_TIMEOUT); // Timeout length
+
     const sourceBlob = "documents/txt/00_README.txt";
     const sourceStorageContainerName = "adobe-sample-asset-repository";
     const sourceLocalFile = `${__dirname}/resources/test.csv`;
