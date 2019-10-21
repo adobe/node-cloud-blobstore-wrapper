@@ -62,6 +62,7 @@ describe('Azure Test', function () {
                 process.env.AZURE_STORAGE_KEY = storageCredentials.azure.accountKey;
                 process.env.AZURE_STORAGE_ACCOUNT = storageCredentials.azure.accountName;
             } else {
+                console.log('No Azure storage credentials found, skipping test');
                 this.skip();
             }
         }
