@@ -50,38 +50,36 @@ describe('Azure Test', function () {
     targetBlob = `${targetBlob}${scriptName}/${date}/`;
 
     before("Check Azure Credentials", function (done) {
-        try {
-            /* Loads storage credentials from local file or ENV pointing to a YAML file containing cloud storage credentials */
-            if (!process.env.AZURE_STORAGE_KEY && !process.env.AZURE_STORAGE_ACCOUNT) {
+        /* Loads storage credentials from local file or ENV pointing to a YAML file containing cloud storage credentials */
+        if (!process.env.AZURE_STORAGE_KEY && !process.env.AZURE_STORAGE_ACCOUNT) {
 
-                const credentialFile = process.env.NUI_CREDENTIALS_YAML || path.join(os.homedir(), ".nui/credentials.yaml");
-                console.log(`  INFO: AZURE_STORAGE_KEY and/or AZURE_STORAGE_ACCOUNT are not set, trying file: ${credentialFile}\n`);
+            const credentialFile = process.env.NUI_CREDENTIALS_YAML || path.join(os.homedir(), ".nui/credentials.yaml");
+            console.log(`  INFO: AZURE_STORAGE_KEY and/or AZURE_STORAGE_ACCOUNT are not set, trying file: ${credentialFile}\n`);
 
-                if (fs.existsSync(credentialFile)) {
+            if (fs.existsSync(credentialFile)) {
 
-                    const storageCredentials = yaml.safeLoad(fs.readFileSync(credentialFile, 'utf8'));
-                    process.env.AZURE_STORAGE_KEY = storageCredentials.azure.accountKey;
-                    process.env.AZURE_STORAGE_ACCOUNT = storageCredentials.azure.accountName;
-                }
+                const storageCredentials = yaml.safeLoad(fs.readFileSync(credentialFile, 'utf8'));
+                process.env.AZURE_STORAGE_KEY = storageCredentials.azure.accountKey;
+                process.env.AZURE_STORAGE_ACCOUNT = storageCredentials.azure.accountName;
+            } else {
+                this.skip();
             }
-
-            /* Create source storage container object */
-            sourceStorageContainer = new azure({
-                    accountKey: process.env.AZURE_STORAGE_KEY,
-                    accountName: process.env.AZURE_STORAGE_ACCOUNT},
-                sourceStorageContainerName);
-
-            sourceAssetUrl = sourceStorageContainer.presignGet(sourceBlob, 600000);
-
-            /* Create target storage container object */
-            targetStorageContainer = new azure({
-                    accountKey: process.env.AZURE_STORAGE_KEY,
-                    accountName: process.env.AZURE_STORAGE_ACCOUNT},
-                targetStorageContainerName);
-
-        } catch (err) {
-            this.skip();
         }
+
+        /* Create source storage container object */
+        sourceStorageContainer = new azure({
+                accountKey: process.env.AZURE_STORAGE_KEY,
+                accountName: process.env.AZURE_STORAGE_ACCOUNT},
+            sourceStorageContainerName);
+
+        sourceAssetUrl = sourceStorageContainer.presignGet(sourceBlob, 600000);
+
+        /* Create target storage container object */
+        targetStorageContainer = new azure({
+                accountKey: process.env.AZURE_STORAGE_KEY,
+                accountName: process.env.AZURE_STORAGE_ACCOUNT},
+            targetStorageContainerName);
+
         return done();
     });
 
