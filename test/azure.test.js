@@ -140,4 +140,28 @@ describe('Azure Test', function () {
             assert.equal(result._response.status, 200, `HTTP status should be 200: Received ${result._response.status}`);
         });
     });
+
+    describe("#getContentLength()", function () {
+
+        it("Positive", async function () {
+
+            const blobName = "images/jpeg/1.JPG";
+            const expected = 24759;
+
+            const length = await sourceStorageContainer.getContentLength(blobName);
+            assert.equal(length, expected, `Blob Content Length is ${length} but should be equal to ${expected}`);
+        });
+    });
+
+    describe("#getContentType()", function () {
+
+        it("Positive", async function () {
+
+            const blobName = "images/jpeg/1.JPG";
+            const expected = "image/jpeg";
+
+            const mime = await sourceStorageContainer.getContentType(blobName);
+            assert.equal(mime, expected, `Blob Content Type is ${mime} but should be equal to ${expected}`);
+        });
+    });
 });
