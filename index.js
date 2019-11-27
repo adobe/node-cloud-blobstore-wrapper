@@ -17,8 +17,8 @@
 
 'use strict';
 
-const { ContainerAzure } = require('./lib/azure.js');
+const { CloudStorage } = require('./lib/cloudstorage.js');
 
 module.exports = {
-    ContainerAzure
+    CloudStorage
 }
