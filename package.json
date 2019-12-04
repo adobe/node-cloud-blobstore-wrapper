@@ -25,6 +25,6 @@
   },
   "scripts": {
     "pretest": "eslint ./",
-    "test": "nyc mocha"
+    "test": "nyc --reporter=html --reporter=text mocha"
   }
 }
