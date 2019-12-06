@@ -39,6 +39,7 @@ describe("Azure Test", function () {
     const sourceLocalFile = `${__dirname}/resources/00_README.txt`;
     const targetStorageContainerName = "nui-automation";
     const expiry = 300;
+    const cdnUrl = "http://fake.site.com:8080";
 
     let sourceAssetUrl;
     let sourceStorageContainer;
@@ -250,7 +251,7 @@ describe("Azure Test", function () {
 
             } catch (error) {
                 expect(error).toBeDefined;
-                expect(error).toEqual(`sourceUrl value is not a valid https URL: ${url}`);
+                expect(error).toEqual(`sourceUrl value is not a valid web URL: ${url}`);
             }
         });
     });
@@ -391,6 +392,75 @@ describe("Azure Test", function () {
 
                 const result = await sourceStorageContainer.listObjects("fake/path");
                 expect(result.length).toEqual(0);
+            });
+        });
+    });
+
+    describe("CDN insertion", function () {
+
+        describe("Positive", function () {
+
+            it("CDN value present", async function () {
+
+                const container = new azure({
+                    accountName: process.env.AZURE_STORAGE_ACCOUNT,
+                    accountKey: process.env.AZURE_STORAGE_KEY},
+                sourceStorageContainerName, {
+                    cdnUrl: cdnUrl
+                });
+
+                let url = await container.presignGet(sourceBlob, expiry);
+                url = decodeURIComponent(decodeURI(url));
+
+                const regexDifferentRegion = [
+                    new RegExp(`^${cdnUrl}/${sourceStorageContainerName}/${sourceBlob}\\?.*`, "i"),
+                    new RegExp('.*sv=[0-9]{4}-[0-9]{2}-[0-9]{2}.*', "i"),
+                    new RegExp('.*spr=https.*', "i"),
+                    new RegExp('.*se=[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z.*', "i"),
+                    new RegExp('.*sr=b.*', "i"),
+                    new RegExp('.*sp=r.*', "i"),
+                    new RegExp('.*sig=[0-9a-zA-Z/+]{43}=.*', "i")
+                ];
+                for (const regex of regexDifferentRegion) {
+                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
+                }
+            });
+        });
+
+        describe("Negative", function () {
+
+            it("CDN is white space", async function () {
+
+                const container = new azure({
+                    accountName: process.env.AZURE_STORAGE_ACCOUNT,
+                    accountKey: process.env.AZURE_STORAGE_KEY},
+                sourceStorageContainerName, {
+                    cdnUrl: "\n"
+                });
+
+                let url = await container.presignGet(sourceBlob, expiry);
+                url = decodeURIComponent(decodeURI(url));
+
+                for (const regex of regexPresignedUrlGet) {
+                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
+                }
+            });
+
+            it("CDN is not a web URI", async function () {
+
+                const cdnUrl = "fake.string.uri";
+
+                try{
+                    new azure({
+                        accountName: process.env.AZURE_STORAGE_ACCOUNT,
+                        accountKey: process.env.AZURE_STORAGE_KEY},
+                    sourceStorageContainerName, {
+                        cdnUrl: cdnUrl
+                    });
+
+                } catch (error) {
+                    assert.deepStrictEqual(error, `CDN URL is not valid, it may be missing protocol: ${cdnUrl}`, `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
+                }
             });
         });
     });

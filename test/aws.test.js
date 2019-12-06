@@ -40,6 +40,7 @@ describe("AWS Test", function () {
     const targetStorageContainerName = "nui-automation";
     const expiry = 300;
     const containerRegion = "us-east-1";
+    const cdnUrl = "http://fake.site.com:8080";
 
     let sourceAssetUrl;
     let sourceStorageContainer;
@@ -307,6 +308,7 @@ describe("AWS Test", function () {
 
                 let url = await sourceStorageContainer.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
+
                 for (const regex of regexPresignedGetUrl) {
                     assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
                 }
@@ -480,7 +482,7 @@ describe("AWS Test", function () {
 
             } catch (error) {
                 expect(error).toBeDefined();
-                expect(error).toEqual(`sourceUrl value is not a valid https URL: ${url}`);
+                expect(error).toEqual(`sourceUrl value is not a valid web URL: ${url}`);
             }
         });
     });
@@ -537,6 +539,75 @@ describe("AWS Test", function () {
 
                 fs.unlinkSync(localDestinationFile);
             }
+        });
+    });
+
+    describe("CDN insertion", function () {
+
+        describe("Positive", function () {
+
+            it("CDN value present", async function () {
+
+                const container = new aws({
+                    accessKeyId: process.env.AWS_ACCESS_KEY,
+                    secretAccessKey: process.env.AWS_SECRET_KEY},
+                sourceStorageContainerName, {
+                    cdnUrl: cdnUrl
+                });
+
+                let url = await container.presignGet(sourceObject, expiry);
+                url = decodeURIComponent(decodeURI(url));
+
+                const regexDifferentRegion = [
+                    new RegExp(`^${cdnUrl}/${sourceObject}\\?.*`, "i"),
+                    new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
+                    new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
+                    new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
+                    new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                    new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
+                    new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
+                ];
+                for (const regex of regexDifferentRegion) {
+                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
+                }
+            });
+        });
+
+        describe("Negative", function () {
+
+            it("CDN is white space", async function () {
+
+                const container = new aws({
+                    accessKeyId: process.env.AWS_ACCESS_KEY,
+                    secretAccessKey: process.env.AWS_SECRET_KEY},
+                sourceStorageContainerName, {
+                    cdnUrl: "\n"
+                });
+
+                let url = await container.presignGet(sourceObject, expiry);
+                url = decodeURIComponent(decodeURI(url));
+
+                for (const regex of regexPresignedGetUrl) {
+                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
+                }
+            });
+
+            it("CDN is not a web URI", async function () {
+
+                const cdnUrl = "fake.string.uri";
+
+                try{
+                    new aws({
+                        accessKeyId: process.env.AWS_ACCESS_KEY,
+                        secretAccessKey: process.env.AWS_SECRET_KEY},
+                    sourceStorageContainerName, {
+                        cdnUrl: cdnUrl
+                    });
+
+                } catch (error) {
+                    assert.deepStrictEqual(error, `CDN URL is not valid, it may be missing protocol: ${cdnUrl}`, `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
+                }
+            });
         });
     });
 });
