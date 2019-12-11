@@ -23,8 +23,7 @@ const os = require('os');
 const fs = require('fs');
 
 const yaml = require('js-yaml');
-const assert = require('assert');
-const expect = require('expect');
+const assert = require('chai').assert;
 
 const azure = require('../lib/azure.js').ContainerAzure;
 
@@ -38,7 +37,7 @@ describe("Azure Test", function () {
     const sourceStorageContainerName = "adobe-sample-asset-repository";
     const sourceLocalFile = `${__dirname}/resources/00_README.txt`;
     const targetStorageContainerName = "nui-automation";
-    const expiry = 300;
+    const expiry = 1000;
     const cdnUrl = "http://fake.site.com:8080";
 
     let sourceAssetUrl;
@@ -163,13 +162,13 @@ describe("Azure Test", function () {
                 try{
                     new azure();
                 } catch (error) {
-                    expect(error).toEqual("Authentication was not provided");
+                    assert.strictEqual(error, "Authentication was not provided", "Should fail if credentials are not provided");
                 }
 
                 try{
                     new azure({});
                 } catch (error) {
-                    expect(error).toEqual("Authentication was not provided");
+                    assert.strictEqual(error, "Authentication was not provided", "Should fail if credentials are not provided");
                 }
             });
 
@@ -177,7 +176,7 @@ describe("Azure Test", function () {
                 try{
                     new azure({accountKey: process.env.AZURE_STORAGE_KEY});
                 } catch (error) {
-                    expect(error).toEqual("Authentication was not provided");
+                    assert.strictEqual(error, "Authentication was not provided", "Should fail if credentials are not provided");
                 }
             });
 
@@ -185,7 +184,7 @@ describe("Azure Test", function () {
                 try{
                     new azure({accountName: process.env.AZURE_STORAGE_ACCOUNT});
                 } catch (error) {
-                    expect(error).toEqual("Authentication was not provided");
+                    assert.strictEqual(error, "Authentication was not provided", "Should fail if credentials are not provided");
                 }
             });
 
@@ -194,8 +193,9 @@ describe("Azure Test", function () {
                     new azure({
                         accountName: process.env.AZURE_STORAGE_ACCOUNT,
                         accountKey: process.env.AZURE_STORAGE_KEY});
+
                 } catch (error) {
-                    expect(error).toEqual("Azure container name was not provided");
+                    assert.strictEqual(error, "Azure container name was not provided", "Should fail if Azure container name was not defined");
                 }
             });
         });
@@ -233,63 +233,17 @@ describe("Azure Test", function () {
         });
     });
 
-    describe("#uploadFromUrl()", function () {
-
-        it("Positive", async function () {
-
-            await targetStorageContainer.uploadFromUrl(sourceAssetUrl, blob);
-            const result = await targetStorageContainer.listObjects(blob);
-            assert.equal(result[0].name, blob, `Uploaded blob ${result[0].name} should exist in destination: ${blob}`);
-        });
-
-        it("Negative", async function () {
-
-            const url = "notAUrl";
-
-            try {
-                await targetStorageContainer.uploadFromUrl(url, blob);
-
-            } catch (error) {
-                expect(error).toBeDefined;
-                expect(error).toEqual(`sourceUrl value is not a valid web URL: ${url}`);
-            }
-        });
-    });
-
-    describe("#uploadFromFile()", function () {
-
-        it("Positive", async function () {
-
-            await targetStorageContainer.uploadFromFile(sourceLocalFile, blob);
-            const result = await targetStorageContainer.listObjects(blob);
-            assert.equal(result[0].name, blob, `Uploaded blob ${result[0].name} should exist in destination: ${blob}`);
-        });
-
-        it("Negative", async function () {
-
-            const file = "no/such/file.txt";
-
-            try {
-                await targetStorageContainer.uploadFromFile(file, blob);
-
-            } catch (error) {
-                expect(error).toBeDefined();
-                expect(error.code).toEqual("ENOENT");
-            }
-        });
-    });
-
     describe("#downloadAsset()", function () {
 
         it("Positive", async function () {
 
             const localDestinationFile = `${localFile}.txt`;
             await sourceStorageContainer.downloadAsset(localDestinationFile, sourceBlob);
-            assert.equal(fs.existsSync(localDestinationFile), true, `Local file should exist: ${localDestinationFile}`);
+            assert.strictEqual(fs.existsSync(localDestinationFile), true, `Local file should exist: ${localDestinationFile}`);
 
             const result = await sourceStorageContainer.listObjects(sourceBlob);
             const stats = fs.statSync(localDestinationFile);
-            assert.equal(result[0].contentLength, stats.size, `Local file size ${stats.size} should be ${result[0].contentLength}`);
+            assert.strictEqual(result[0].contentLength, stats.size, `Local file size ${stats.size} should be ${result[0].contentLength}`);
 
             fs.unlinkSync(localDestinationFile);
         });
@@ -303,8 +257,8 @@ describe("Azure Test", function () {
                 await sourceStorageContainer.downloadAsset(localDestinationFile, blobName);
 
             } catch (error) {
-                expect(error).toBeDefined();
-                expect(error.statusCode).toEqual(404);
+                assert.isDefined(error, "Error should be thrown");
+                assert.strictEqual(error.statusCode, 404, "Error code should be present");
             }
         });
     });
@@ -312,7 +266,7 @@ describe("Azure Test", function () {
     describe("#validate()", function () {
 
         it("Positive", async function () {
-            assert.deepStrictEqual(await targetStorageContainer.validate(), true);
+            assert.strictEqual(await targetStorageContainer.validate(), true);
         });
 
         describe("Negative", function () {
@@ -327,7 +281,7 @@ describe("Azure Test", function () {
                 try {
                     await container.validate();
                 } catch (error) {
-                    assert.deepStrictEqual(error.body.Code, "InvalidResourceName", `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
+                    assert.strictEqual(error.body.Code, "InvalidResourceName", `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
                 }
             });
         });
@@ -342,16 +296,15 @@ describe("Azure Test", function () {
             const expectedContentType = "image/jpeg";
 
             const metadata = await sourceStorageContainer.getMetadata(blobName);
-            assert.equal(metadata.contentLength, expectedLength, `Blob Content Length is ${metadata.contentLength} but should be equal to ${expectedLength}`);
-            assert.equal(metadata.contentType, expectedContentType, `Blob Mime Type is ${metadata.contentType} but should be equal to ${expectedContentType}`);
-            assert.equal(metadata.name, blobName, `Blob Name is ${metadata.name} but should be equal to ${blobName}`);
+            assert.strictEqual(metadata.contentLength, expectedLength, `Blob Content Length is ${metadata.contentLength} but should be equal to ${expectedLength}`);
+            assert.strictEqual(metadata.contentType, expectedContentType, `Blob Mime Type is ${metadata.contentType} but should be equal to ${expectedContentType}`);
+            assert.strictEqual(metadata.name, blobName, `Blob Name is ${metadata.name} but should be equal to ${blobName}`);
         });
 
         it("Negative", async function () {
 
             const blobName = "fakeBlob";
-
-            expect(await sourceStorageContainer.getMetadata(blobName)).toBeUndefined();
+            assert.strictEqual(await sourceStorageContainer.getMetadata(blobName), undefined, "Non existent object should return no metadata")
         });
     });
 
@@ -360,38 +313,40 @@ describe("Azure Test", function () {
             it("Looping without prefix", async function () {
 
                 const result = await sourceStorageContainer.listObjects();
-                expect(result.length).toBeGreaterThan(5000);
+                assert.isAbove(result.length, 5000, "Listing objects should page after 5000 objects");
 
-                expect(result[0].name).toBeDefined();
-                expect(result[0].contentLength).toBeDefined();
-                expect(result[0].contentType).toBeDefined();
+                assert.isDefined(result[0].name, "Object should contain 'name'");
+                assert.isDefined(result[0].contentLength, "Object should contain 'contentLength'");
+                assert.isDefined(result[0].contentType, "Object should contain 'contentType'");
             });
 
             it("Looping with prefix", async function () {
 
                 const result = await sourceStorageContainer.listObjects("images");
-                expect(result.length).toBeGreaterThan(5000);
+                assert.isAbove(result.length, 5000, "Listing objects should page after 5000 objects");
 
-                expect(result[0].name).toBeDefined();
-                expect(result[0].contentLength).toBeDefined();
-                expect(result[0].contentType).toBeDefined();
+                assert.isDefined(result[0].name, "Object should contain 'name'");
+                assert.isDefined(result[0].contentLength, "Object should contain 'contentLength'");
+                assert.isDefined(result[0].contentType, "Object should contain 'contentType'");
             });
 
             it("No looping with prefix", async function () {
 
-                const result = await sourceStorageContainer.listObjects("images/svg");
-                expect(result.length).toBeGreaterThan(0);
-                expect(result.length).toBeLessThan(5000);
+                const prefix = "images/svg";
+                const result = await sourceStorageContainer.listObjects(prefix);
+                assert.isAtLeast(result.length, 1, `Listing objects in ${prefix} should return at least one object`);
+                assert.isAtMost(result.length, 5000, `Listing objects in ${prefix} should not page`);
 
-                expect(result[0].name).toBeDefined();
-                expect(result[0].contentLength).toBeDefined();
-                expect(result[0].contentType).toBeDefined();
+                assert.isDefined(result[0].name, "Object should contain 'name'");
+                assert.isDefined(result[0].contentLength, "Object should contain 'contentLength'");
+                assert.isDefined(result[0].contentType, "Object should contain 'contentType'");
             });
 
             it("Prefix does not exist", async function () {
 
-                const result = await sourceStorageContainer.listObjects("fake/path");
-                expect(result.length).toEqual(0);
+                const prefix = "fake/path";
+                const result = await sourceStorageContainer.listObjects(prefix);
+                assert.strictEqual(result.length, 0, `Listing objects from ${prefix} should not return any objects`);
             });
         });
     });
@@ -459,7 +414,122 @@ describe("Azure Test", function () {
                     });
 
                 } catch (error) {
-                    assert.deepStrictEqual(error, `CDN URL is not valid, it may be missing protocol: ${cdnUrl}`, `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
+                    assert.strictEqual(error, `CDN URL is not valid, it may be missing protocol: ${cdnUrl}`, `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
+                }
+            });
+        });
+    });
+
+    describe("#upload()", function () {
+
+        describe("Positive", function () {
+
+            it("Upload from local file", async function () {
+
+                await targetStorageContainer.upload(sourceLocalFile, blob);
+                const result = await targetStorageContainer.listObjects(blob);
+
+                assert.isDefined(result, "Result should be defined");
+                assert.strictEqual(result.length, 1, "Result should contain an object");
+                assert.isAtLeast(Object.keys(result[0]).length, 2, "Object should have 2 or more elements");
+                assert.strictEqual(result[0].name, blob, "Uploaded asset key name should match the passed in key name");
+                assert.isAbove(result[0].contentLength, 0, "Content Length value should be greater than 0");
+            });
+
+            it("Upload from URL", async function () {
+
+                await targetStorageContainer.upload(sourceAssetUrl, blob);
+                const result = await targetStorageContainer.listObjects(blob);
+
+                assert.isDefined(result, "Result should be defined");
+                assert.strictEqual(result.length, 1, "Result should contain an object");
+                assert.isAtLeast(Object.keys(result[0]).length, 2, "Object should have 2 or more elements");
+                assert.strictEqual(result[0].name, blob, "Uploaded asset key name should match the passed in key name");
+                assert.isAbove(result[0].contentLength, 0, "Content Length value should be greater than 0");
+            });
+
+            it("Force Multipart with a 500MB+ asset", async function () {
+
+                const sourceObjectLarge = "images/psd/Sunflower-text-500MB.psd";
+                blob = blob.replace("txt", "psd");
+
+                const sourceAssetUrlLarge = await sourceStorageContainer.presignGet(sourceObjectLarge, expiry);
+                await targetStorageContainer.upload(sourceAssetUrlLarge, blob);
+
+                const result = await targetStorageContainer.listObjects(blob);
+
+                assert.isDefined(result, "Result should be defined");
+                assert.strictEqual(result.length, 1, "Result should contain an object");
+                assert.isAtLeast(Object.keys(result[0]).length, 2, "Object should have 2 or more elements");
+                assert.strictEqual(result[0].name, blob, "Uploaded asset key name should match the passed in key name");
+                assert.isAtLeast(result[0].contentLength, 563700000, "Content Length value should be greater than 563700000");
+            });
+        });
+
+        describe("Negative", function () {
+
+            it("Bad URL syntax", async function () {
+
+                const url = "just a string";
+
+                try {
+                    await targetStorageContainer.upload(url, blob);
+
+                } catch (error) {
+                    assert.isDefined(error, "Error should be thrown");
+                    assert.strictEqual(error.code, "ENOENT", "Error code should match");
+                }
+            });
+
+            it("Missing protocol", async function () {
+
+                const url = "www.google.com";
+
+                try {
+                    await targetStorageContainer.upload(url, blob);
+
+                } catch (error) {
+                    assert.isDefined(error, "Error should be thrown");
+                    assert.strictEqual(error.code, "ENOENT", "Error code should match");
+                }
+            });
+
+            it("Incorrect protocol", async function () {
+
+                const url = "file://www.google.com";
+
+                try {
+                    await targetStorageContainer.upload(url, blob);
+
+                } catch (error) {
+                    assert.isDefined(error, "Error should be thrown");
+                    assert.strictEqual(error.code, "ENOENT", "Error code should match");
+                }
+            });
+
+            it("Domain does not exist", async function () {
+
+                const url = "https://fake.domain.com";
+
+                try {
+                    await targetStorageContainer.upload(url, blob);
+
+                } catch (error) {
+                    assert.isDefined(error, "Error should be thrown");
+                    assert.strictEqual(error, `Unable to request ${url}: 404`, "Error message should match");
+                }
+            });
+
+            it("Local file does not exist", async function () {
+
+                const file = "no/such/file.txt";
+
+                try {
+                    await targetStorageContainer.upload(file, blob);
+
+                } catch (error) {
+                    assert.isDefined(error, "Error should be thrown");
+                    assert.strictEqual(error.code, "ENOENT", "Error code should match");
                 }
             });
         });

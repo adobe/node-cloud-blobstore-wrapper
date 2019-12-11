@@ -22,10 +22,8 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
-const validUrl = require('valid-url');
 
-const expect = require('expect');
-const assert = require('assert');
+const assert = require('chai').assert;
 
 const { CloudStorage } = require('../lib/cloudstorage.js');
 
@@ -41,6 +39,8 @@ describe('Cloudstorage Test', function () {
     const targetStorageContainerName = "nui-automation";
 
     const awsContainerRegion = "us-east-1";
+
+    const expiry = 300;
 
     let combinedCredentials;
     let azureSourceStorageContainer;
@@ -122,7 +122,7 @@ describe('Cloudstorage Test', function () {
     beforeEach("Build destinations", function (done) {
 
         targetCloudStorageAsset = `${targetCloudStoragePath}${new Date().getTime()}.txt`;
-        localFile = `${__dirname}/resources/${new Date().getTime()}.txt`;
+        localFile = `${__dirname}/resources/${new Date().getTime()}`;
         return done();
     });
 
@@ -140,97 +140,161 @@ describe('Cloudstorage Test', function () {
                             sourceStorageContainerName);
 
                     } catch (error) {
-                        expect(error).toEqual("Only one set of cloud storage credentials are allowed, both Azure and AWS credentials are present");
+                        assert.strictEqual(error, "Only one set of cloud storage credentials are allowed. Both Azure and AWS credentials are currently defined", "Should fail if both Azure and AWS credentials are provided");
                     }
                 });
             });
         });
 
         it("#validate()", async function () {
-            expect(await azureSourceStorageContainer.validate()).toBeTruthy();
-            expect(await awsSourceStorageContainer.validate()).toBeTruthy();
+            assert.strictEqual(await azureSourceStorageContainer.validate(), true);
+            assert.strictEqual(await azureSourceStorageContainer.validate(), true);
         });
 
         it("#listObjects()", async function () {
             const prefix = "images/svg";
 
-            const azureResult = await azureSourceStorageContainer.listObjects(prefix);
-            expect(azureResult.length).toBeGreaterThan(0);
-            expect(azureResult.length).toBeLessThan(1000);
-            expect(azureResult[0].name).toBeDefined();
-            expect(azureResult[0].contentLength).toBeDefined();
-            expect(azureResult[0].contentType).toBeDefined();
+            const azureUrlResult = await azureSourceStorageContainer.listObjects(prefix);
+            assert.isAtLeast(azureUrlResult.length, 1, `Listing objects in ${prefix} should return at least one object`);
+            assert.isAtMost(azureUrlResult.length, 5000, `Listing objects in ${prefix} should not page`);
 
-            const awsResult = await awsSourceStorageContainer.listObjects(prefix);
-            expect(awsResult.length).toBeGreaterThan(0);
-            expect(awsResult.length).toBeLessThan(1000);
-            expect(awsResult[0].name).toBeDefined();
-            expect(awsResult[0].contentLength).toBeDefined();
+            assert.isDefined(azureUrlResult[0].name, "Object should contain 'name'");
+            assert.isDefined(azureUrlResult[0].contentLength, "Object should contain 'contentLength'");
+            assert.isDefined(azureUrlResult[0].contentType, "Object should contain 'contentType'");
+
+            const awsUrlResult = await awsSourceStorageContainer.listObjects(prefix);
+            assert.isAtLeast(awsUrlResult.length, 1, `Listing objects in ${prefix} should return at least one object`);
+            assert.isAtMost(awsUrlResult.length, 1000, `Listing objects in ${prefix} should not page`);
+
+            assert.isDefined(awsUrlResult[0].name, "Object should contain 'name'");
+            assert.isDefined(awsUrlResult[0].contentLength, "Object should contain 'contentLength'");
         });
 
         it("#presignGet", function () {
-            const source = "documents/txt/00_README.txt";
-            const expirery = 300;
 
-            const azureUrl = azureSourceStorageContainer.presignGet(source, expirery);
-            expect(validUrl.isWebUri(azureUrl)).toBeDefined;
+            const regexAzurePresignedUrlGet = [
+                new RegExp(`^https:\\/\\/${process.env.AZURE_STORAGE_ACCOUNT}\\.blob\\.core\\.windows\\.net/${sourceStorageContainerName}/${sourceCloudStorageAsset}\\?.*`, "i"),
+                new RegExp('.*sv=[0-9]{4}-[0-9]{2}-[0-9]{2}.*', "i"),
+                new RegExp('.*spr=https.*', "i"),
+                new RegExp('.*se=[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z.*', "i"),
+                new RegExp('.*sr=b.*', "i"),
+                new RegExp('.*sp=r.*', "i"),
+                new RegExp('.*sig=[0-9a-zA-Z/+]{43}=.*', "i")
+            ];
 
-            const awsUrl = awsSourceStorageContainer.presignGet(source, expirery);
-            expect(validUrl.isWebUri(awsUrl)).toBeDefined;
+            const regexAwsPresignedUrlGet = [
+                new RegExp(`^https:\\/\\/${sourceStorageContainerName}\\.s3\\.amazonaws\\.com/${sourceCloudStorageAsset}\\?.*`, "i"),
+                new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
+                new RegExp(`.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/${awsContainerRegion}/s3/aws4_request.*`, "i"),
+                new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
+                new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
+                new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
+            ];
+
+            let azureUrl = azureSourceStorageContainer.presignGet(sourceCloudStorageAsset, expiry);
+            azureUrl = decodeURIComponent(decodeURI(azureUrl));
+
+            for (const regex of regexAzurePresignedUrlGet) {
+                assert.strictEqual(regex.test(azureUrl), true, `Presigned URL should contain ${regex}`);
+            }
+
+            let awsUrl = awsSourceStorageContainer.presignGet(sourceCloudStorageAsset, expiry);
+            awsUrl = decodeURIComponent(decodeURI(awsUrl));
+
+            for (const regex of regexAwsPresignedUrlGet) {
+                assert.strictEqual(regex.test(awsUrl), true, `Presigned URL should contain ${regex}`);
+            }
         });
 
         it("#presignPut", function () {
-            const source = "documents/txt/00_README.txt";
-            const expirery = 300;
 
-            const azureUrl = azureSourceStorageContainer.presignPut(source, expirery);
-            expect(validUrl.isWebUri(azureUrl)).toBeDefined;
+            const regexAzurePresignedUrlPut = [
+                new RegExp(`^https:\\/\\/${process.env.AZURE_STORAGE_ACCOUNT}\\.blob\\.core\\.windows\\.net/${targetStorageContainerName}/${targetCloudStorageAsset}\\?.*`, "i"),
+                new RegExp('.*sv=[0-9]{4}-[0-9]{2}-[0-9]{2}.*', "i"),
+                new RegExp('.*spr=https.*', "i"),
+                new RegExp('.*se=[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z.*', "i"),
+                new RegExp('.*sr=b.*', "i"),
+                new RegExp('.*sp=cw.*', "i"),
+                new RegExp('.*sig=[0-9a-zA-Z/+]{43}=.*', "i"),
+                new RegExp('.*comp=block.*', "i"),
+                new RegExp('.*blockid=[a-zA-Z]+.*', "i")
+            ];
 
-            const awsUrl = awsSourceStorageContainer.presignPut(source, expirery);
-            expect(validUrl.isWebUri(awsUrl)).toBeDefined;
+            const regexAwsPresignedUrlPut = [
+                new RegExp(`^https:\\/\\/${targetStorageContainerName}\\.s3(\\.?[a-z]{2}-[a-z]+?-?[0-9]{1}\\.|\\.)amazonaws\\.com/${targetCloudStorageAsset}\\?.*`, "i"),
+                new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
+                new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
+                new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
+                new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
+                new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
+            ];
+
+            let azureUrl = azureTargetStorageContainer.presignPut(targetCloudStorageAsset, expiry);
+            azureUrl = decodeURIComponent(decodeURI(azureUrl));
+
+            for (const regex of regexAzurePresignedUrlPut) {
+                assert.strictEqual(regex.test(azureUrl), true, `Presigned URL should contain ${regex}`);
+            }
+
+            let awsUrl = awsTargetStorageContainer.presignPut(targetCloudStorageAsset, expiry);
+            awsUrl = decodeURIComponent(decodeURI(awsUrl));
+
+            for (const regex of regexAwsPresignedUrlPut) {
+                assert.strictEqual(regex.test(awsUrl), true, `Presigned URL should contain ${regex}`);
+            }
         });
 
-        it("#uploadFromUrl()", async function () {
-            targetCloudStorageAsset = `${targetCloudStorageAsset}.txt`;
+        describe("#upload()", function () {
 
-            await azureTargetStorageContainer.uploadFromUrl(azureSourceAssetUrl, targetCloudStorageAsset);
-            const azureResult = await azureTargetStorageContainer.listObjects(targetCloudStorageAsset);
-            assert.equal(azureResult[0].name, targetCloudStorageAsset, `Uploaded asset ${azureResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
+            it("Azure upload from URL", async function () {
+                await azureTargetStorageContainer.upload(azureSourceAssetUrl, targetCloudStorageAsset);
+                const azureUrlResult = await azureTargetStorageContainer.listObjects(targetCloudStorageAsset);
+                assert.strictEqual(azureUrlResult[0].name, targetCloudStorageAsset, `Uploaded asset ${azureUrlResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
 
-            await awsTargetStorageContainer.uploadFromUrl(awsSourceAssetUrl, targetCloudStorageAsset);
-            const awsResult = await awsTargetStorageContainer.listObjects(targetCloudStorageAsset);
-            assert.equal(awsResult[0].name, targetCloudStorageAsset, `Uploaded asset ${awsResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
-        });
+            });
 
-        it("#uploadFromFile()", async function () {
+            it("AWS upload from URL", async function () {
+                await awsTargetStorageContainer.upload(awsSourceAssetUrl, targetCloudStorageAsset);
+                const awsUrlResult = await awsTargetStorageContainer.listObjects(targetCloudStorageAsset);
+                assert.strictEqual(awsUrlResult[0].name, targetCloudStorageAsset, `Uploaded asset ${awsUrlResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
 
-            await azureTargetStorageContainer.uploadFromFile(sourceLocalFile, targetCloudStorageAsset);
-            const azureResult = await azureTargetStorageContainer.listObjects(targetCloudStorageAsset);
-            assert.equal(azureResult[0].name, targetCloudStorageAsset, `Uploaded asset ${azureResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
+            });
 
-            await awsTargetStorageContainer.uploadFromFile(sourceLocalFile, targetCloudStorageAsset);
-            const awsResult = await awsTargetStorageContainer.listObjects(targetCloudStorageAsset);
-            assert.equal(awsResult[0].name, targetCloudStorageAsset, `Uploaded asset ${awsResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
+            it("Azure upload from local file", async function () {
+                await azureTargetStorageContainer.upload(sourceLocalFile, targetCloudStorageAsset);
+                const azureLocalResult = await azureTargetStorageContainer.listObjects(targetCloudStorageAsset);
+                assert.strictEqual(azureLocalResult[0].name, targetCloudStorageAsset, `Uploaded asset ${azureLocalResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
+
+            });
+
+            it("AWS upload from local file", async function () {
+
+                await awsTargetStorageContainer.upload(sourceLocalFile, targetCloudStorageAsset);
+                const awsLocalResult = await awsTargetStorageContainer.listObjects(targetCloudStorageAsset);
+                assert.strictEqual(awsLocalResult[0].name, targetCloudStorageAsset, `Uploaded asset ${awsLocalResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
+            });
         });
 
         it("#downloadAsset()", async function () {
             const azureLocalDestinationFile = `${localFile}-azure.txt`;
             await azureSourceStorageContainer.downloadAsset(azureLocalDestinationFile, sourceCloudStorageAsset);
-            assert.equal(fs.existsSync(azureLocalDestinationFile), true, `Local file should exist: ${azureLocalDestinationFile}`);
+            assert.strictEqual(fs.existsSync(azureLocalDestinationFile), true, `Local file should exist: ${azureLocalDestinationFile}`);
 
-            const azureResult = await azureSourceStorageContainer.listObjects(sourceCloudStorageAsset);
+            const azureUrlResult = await azureSourceStorageContainer.listObjects(sourceCloudStorageAsset);
             const azureStats = fs.statSync(azureLocalDestinationFile);
-            assert.equal(azureResult[0].contentLength, azureStats.size, `Local file size ${azureStats.size} should be ${azureResult[0].contentLength}`);
+            assert.strictEqual(azureUrlResult[0].contentLength, azureStats.size, `Local file size ${azureStats.size} should be ${azureUrlResult[0].contentLength}`);
 
             fs.unlinkSync(azureLocalDestinationFile);
 
             const awsLocalDestinationFile = `${localFile}-aws.txt`;
             await awsSourceStorageContainer.downloadAsset(awsLocalDestinationFile, sourceCloudStorageAsset);
-            assert.equal(fs.existsSync(awsLocalDestinationFile), true, `Local file should exist: ${awsLocalDestinationFile}`);
+            assert.strictEqual(fs.existsSync(awsLocalDestinationFile), true, `Local file should exist: ${awsLocalDestinationFile}`);
 
-            const awsResult = await awsSourceStorageContainer.listObjects(sourceCloudStorageAsset);
+            const awsUrlResult = await awsSourceStorageContainer.listObjects(sourceCloudStorageAsset);
             const awsStats = fs.statSync(awsLocalDestinationFile);
-            assert.equal(awsResult[0].contentLength, awsStats.size, `Local file size ${awsStats.size} should be ${awsResult[0].contentLength}`);
+            assert.strictEqual(awsUrlResult[0].contentLength, awsStats.size, `Local file size ${awsStats.size} should be ${awsUrlResult[0].contentLength}`);
 
             fs.unlinkSync(awsLocalDestinationFile);
         })
@@ -242,13 +306,13 @@ describe('Cloudstorage Test', function () {
             const expectedContentType = "image/jpeg";
 
             const azureMetadata = await azureSourceStorageContainer.getMetadata(assetName);
-            assert.equal(azureMetadata.contentLength, expectedLength, `Asset Content Length is ${azureMetadata.contentLength} but should be equal to ${expectedLength}`);
-            assert.equal(azureMetadata.contentType, expectedContentType, `Asset Mime Type is ${azureMetadata.contentType} but should be equal to ${expectedContentType}`);
-            assert.equal(azureMetadata.name, assetName, `Asset Name is ${azureMetadata.name} but should be equal to ${assetName}`);
+            assert.strictEqual(azureMetadata.contentLength, expectedLength, `Asset Content Length is ${azureMetadata.contentLength} but should be equal to ${expectedLength}`);
+            assert.strictEqual(azureMetadata.contentType, expectedContentType, `Asset Mime Type is ${azureMetadata.contentType} but should be equal to ${expectedContentType}`);
+            assert.strictEqual(azureMetadata.name, assetName, `Asset Name is ${azureMetadata.name} but should be equal to ${assetName}`);
 
             const awsMetadata = await awsSourceStorageContainer.getMetadata(assetName);
-            assert.equal(awsMetadata.contentLength, expectedLength, `Asset Content Length is ${awsMetadata.contentLength} but should be equal to ${expectedLength}`);
-            assert.equal(awsMetadata.name, assetName, `Asset Name is ${awsMetadata.name} but should be equal to ${assetName}`);
+            assert.strictEqual(awsMetadata.contentLength, expectedLength, `Asset Content Length is ${awsMetadata.contentLength} but should be equal to ${expectedLength}`);
+            assert.strictEqual(awsMetadata.name, assetName, `Asset Name is ${awsMetadata.name} but should be equal to ${assetName}`);
         });
 
 

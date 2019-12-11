@@ -23,8 +23,7 @@ const os = require('os');
 const fs = require('fs');
 
 const yaml = require('js-yaml');
-const assert = require('assert');
-const expect = require('expect');
+const assert = require('chai').assert;
 
 const aws = require('../lib/aws.js').ContainerAws;
 
@@ -38,7 +37,7 @@ describe("AWS Test", function () {
     const sourceStorageContainerName = "adobe-sample-asset-repository";
     const sourceLocalFile = `${__dirname}/resources/00_README.txt`;
     const targetStorageContainerName = "nui-automation";
-    const expiry = 300;
+    const expiry = 1000;
     const containerRegion = "us-east-1";
     const cdnUrl = "http://fake.site.com:8080";
 
@@ -48,8 +47,8 @@ describe("AWS Test", function () {
     let targetStorageContainer;
     let s3Object;
     let localFile;
-    let regexPresignedPutUrl = [];
-    let regexPresignedGetUrl = [];
+    let regexPresignedUrlPut = [];
+    let regexPresignedUrlGet = [];
 
 
     /* Create destination S3 object prefix for run */
@@ -94,7 +93,7 @@ describe("AWS Test", function () {
             targetStorageContainerName,
             {bucketRegion: containerRegion});
 
-        regexPresignedGetUrl = [
+        regexPresignedUrlGet = [
             new RegExp(`^https:\\/\\/${sourceStorageContainerName}\\.s3\\.amazonaws\\.com/${sourceObject}\\?.*`, "i"),
             new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
             new RegExp(`.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/${containerRegion}/s3/aws4_request.*`, "i"),
@@ -110,7 +109,7 @@ describe("AWS Test", function () {
         s3Object = `${targetObject}${new Date().getTime()}.txt`;
         localFile = `${__dirname}/resources/${new Date().getTime()}`;
 
-        regexPresignedPutUrl = [
+        regexPresignedUrlPut = [
             new RegExp(`^https:\\/\\/${targetStorageContainerName}\\.s3(\\.?[a-z]{2}-[a-z]+?-?[0-9]{1}\\.|\\.)amazonaws\\.com/${s3Object}\\?.*`, "i"),
             new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
             new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
@@ -188,7 +187,7 @@ describe("AWS Test", function () {
                 try{
                     new aws();
                 } catch (error) {
-                    expect(error).toEqual("Authentication was not provided");
+                    assert.strictEqual(error, "Authentication was not provided", "Should fail if credentials are not provided");
                 }
 
                 try{
@@ -196,7 +195,7 @@ describe("AWS Test", function () {
                         sourceStorageContainerName,
                         {bucketRegion: containerRegion});
                 } catch (error) {
-                    expect(error).toEqual("Authentication was not provided");
+                    assert.strictEqual(error, "Authentication was not provided", "Should fail if credentials are not provided");
                 }
             });
 
@@ -206,7 +205,7 @@ describe("AWS Test", function () {
                         sourceStorageContainerName,
                         {bucketRegion: containerRegion});
                 } catch (error) {
-                    expect(error).toEqual("Authentication was not provided");
+                    assert.strictEqual(error, "Authentication was not provided", "Should fail if credentials are not provided");
                 }
             });
 
@@ -216,7 +215,7 @@ describe("AWS Test", function () {
                         sourceStorageContainerName,
                         {bucketRegion: containerRegion});
                 } catch (error) {
-                    expect(error).toEqual("Authentication was not provided");
+                    assert.strictEqual(error, "Authentication was not provided", "Should fail if credentials are not provided");
                 }
             });
 
@@ -228,7 +227,7 @@ describe("AWS Test", function () {
                         undefined,
                         {bucketRegion: containerRegion});
                 } catch (error) {
-                    expect(error).toEqual("S3 bucket name was not provided");
+                    assert.strictEqual(error, "S3 bucket name was not provided", "Should fail if AWS S3 bucket was not defined");
                 }
             });
         });
@@ -242,11 +241,11 @@ describe("AWS Test", function () {
 
                 let url = await targetStorageContainer.presignPut(s3Object, expiry);
                 url = decodeURIComponent(decodeURI(url));
-                for (const regex of regexPresignedPutUrl) {
+                for (const regex of regexPresignedUrlPut) {
                     assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
                 }
 
-                await targetStorageContainer.uploadFromFile(sourceLocalFile, s3Object);
+                await targetStorageContainer.upload(sourceLocalFile, s3Object);
                 const result = await targetStorageContainer.listObjects(s3Object);
                 assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
@@ -274,9 +273,9 @@ describe("AWS Test", function () {
                     assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
                 }
 
-                await container.uploadFromFile(sourceLocalFile, s3Object);
+                await container.upload(sourceLocalFile, s3Object);
                 const result = await container.listObjects(s3Object);
-                assert.equal(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
+                assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
 
             it("Fake region", async function () {
@@ -289,13 +288,13 @@ describe("AWS Test", function () {
 
                 let url = await container.presignPut(s3Object, expiry);
                 url = decodeURIComponent(decodeURI(url));
-                for (const regex of regexPresignedPutUrl) {
+                for (const regex of regexPresignedUrlPut) {
                     assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
                 }
 
-                await container.uploadFromFile(sourceLocalFile, s3Object);
+                await container.upload(sourceLocalFile, s3Object);
                 const result = await container.listObjects(s3Object);
-                assert.equal(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
+                assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
         });
     });
@@ -309,7 +308,7 @@ describe("AWS Test", function () {
                 let url = await sourceStorageContainer.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
-                for (const regex of regexPresignedGetUrl) {
+                for (const regex of regexPresignedUrlGet) {
                     assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
                 }
 
@@ -317,7 +316,7 @@ describe("AWS Test", function () {
                 await sourceStorageContainer.downloadAsset(localDestinationFile, sourceObject);
                 const result = await sourceStorageContainer.listObjects(sourceObject);
                 const stats = fs.statSync(localDestinationFile);
-                assert.equal(result[0].contentLength, stats.size, `Local file size ${stats.size} should be ${result[0].contentLength}`);
+                assert.strictEqual(result[0].contentLength, stats.size, `Local file size ${stats.size} should be ${result[0].contentLength}`);
 
                 fs.unlinkSync(localDestinationFile);
             });
@@ -349,7 +348,7 @@ describe("AWS Test", function () {
                 await container.downloadAsset(localDestinationFile, sourceObject);
                 const result = await container.listObjects(sourceObject);
                 const stats = fs.statSync(localDestinationFile);
-                assert.equal(result[0].contentLength, stats.size, `Local file size ${stats.size} should be ${result[0].contentLength}`);
+                assert.strictEqual(result[0].contentLength, stats.size, `Local file size ${stats.size} should be ${result[0].contentLength}`);
 
                 fs.unlinkSync(localDestinationFile);
             });
@@ -364,7 +363,7 @@ describe("AWS Test", function () {
 
                 let url = await container.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
-                for (const regex of regexPresignedGetUrl) {
+                for (const regex of regexPresignedUrlGet) {
                     assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
                 }
 
@@ -372,7 +371,7 @@ describe("AWS Test", function () {
                 await container.downloadAsset(localDestinationFile, sourceObject);
                 const result = await container.listObjects(sourceObject);
                 const stats = fs.statSync(localDestinationFile);
-                assert.equal(result[0].contentLength, stats.size, `Local file size ${stats.size} should be ${result[0].contentLength}`);
+                assert.strictEqual(result[0].contentLength, stats.size, `Local file size ${stats.size} should be ${result[0].contentLength}`);
 
                 fs.unlinkSync(localDestinationFile);
             });
@@ -382,7 +381,7 @@ describe("AWS Test", function () {
     describe("#validate()", function () {
 
         it("Positive", async function () {
-            assert.deepStrictEqual(await sourceStorageContainer.validate(), true);
+            assert.strictEqual(await sourceStorageContainer.validate(), true);
         });
 
         describe("Negative", function () {
@@ -397,7 +396,7 @@ describe("AWS Test", function () {
                 try{
                     await badStorageContainer.validate();
                 } catch (error) {
-                    assert.deepStrictEqual(error.code, "NoSuchBucket", `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
+                    assert.strictEqual(error.code, "NoSuchBucket", `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
                 }
             });
         });
@@ -408,35 +407,37 @@ describe("AWS Test", function () {
             it("Looping without prefix", async function () {
 
                 const result = await sourceStorageContainer.listObjects();
-                expect(result.length).toBeGreaterThan(1000);
+                assert.isAbove(result.length, 1000, "Listing objects should page after 1000 objects");
 
-                expect(result[0].name).toBeDefined();
-                expect(result[0].contentLength).toBeDefined();
+                assert.isDefined(result[0].name, "Object should contain 'name'");
+                assert.isDefined(result[0].contentLength, "Object should contain 'contentLength'");
             });
 
             it("Looping with prefix", async function () {
 
                 const result = await sourceStorageContainer.listObjects("images");
-                expect(result.length).toBeGreaterThan(1000);
+                assert.isAbove(result.length, 1000, "Listing objects should page after 1000 objects");
 
-                expect(result[0].name).toBeDefined();
-                expect(result[0].contentLength).toBeDefined();
+                assert.isDefined(result[0].name, "Object should contain 'name'");
+                assert.isDefined(result[0].contentLength, "Object should contain 'contentLength'");
             });
 
             it("No looping with prefix", async function () {
 
-                const result = await sourceStorageContainer.listObjects("images/svg");
-                expect(result.length).toBeGreaterThan(0);
-                expect(result.length).toBeLessThan(1000);
+                const prefix = "images/svg";
+                const result = await sourceStorageContainer.listObjects(prefix);
+                assert.isAtLeast(result.length, 1, `Listing objects in ${prefix} should return at least one object`);
+                assert.isAtMost(result.length, 1000, `Listing objects in ${prefix} should not page`);
 
-                expect(result[0].name).toBeDefined();
-                expect(result[0].contentLength).toBeDefined();
+                assert.isDefined(result[0].name, "Object should contain 'name'");
+                assert.isDefined(result[0].contentLength, "Object should contain 'contentLength'");
             });
 
             it("Prefix does not exist", async function () {
 
-                const result = await sourceStorageContainer.listObjects("fake/path");
-                expect(result.length).toEqual(0);
+                const prefix = "fake/path";
+                const result = await sourceStorageContainer.listObjects(prefix);
+                assert.strictEqual(result.length, 0, `Listing objects from ${prefix} should not return any objects`);
             });
         });
     });
@@ -449,64 +450,14 @@ describe("AWS Test", function () {
             const expectedLength = 24759;
 
             const metadata = await sourceStorageContainer.getMetadata(s3ObjectName);
-            assert.equal(metadata.contentLength, expectedLength, `S3 Object Content Length is ${metadata.contentLength} but should be equal to ${expectedLength}`);
-            assert.equal(metadata.name, s3ObjectName, `S3 Object Name is ${metadata.name} but should be equal to ${s3ObjectName}`);
+            assert.strictEqual(metadata.contentLength, expectedLength, `S3 Object Content Length is ${metadata.contentLength} but should be equal to ${expectedLength}`);
+            assert.strictEqual(metadata.name, s3ObjectName, `S3 Object Name is ${metadata.name} but should be equal to ${s3ObjectName}`);
         });
 
         it("Negative", async function () {
 
             const s3ObjectName = "fakeS3Object";
-
-            expect(await sourceStorageContainer.getMetadata(s3ObjectName)).toBeUndefined();
-        });
-    });
-
-    describe("#uploadFromUrl()", function () {
-
-        it("Positive", async function () {
-
-            await targetStorageContainer.uploadFromUrl(sourceAssetUrl, s3Object);
-            const result = await targetStorageContainer.listObjects(s3Object);
-
-            expect(result).toBeDefined();
-            expect(result[0].name).toEqual(s3Object);
-            expect(result[0].contentLength).toBeGreaterThan(0);
-        });
-
-        it("Negative", async function () {
-
-            const url = "notAUrl";
-
-            try {
-                await targetStorageContainer.uploadFromUrl(url, s3Object);
-
-            } catch (error) {
-                expect(error).toBeDefined();
-                expect(error).toEqual(`sourceUrl value is not a valid web URL: ${url}`);
-            }
-        });
-    });
-
-    describe("#uploadFromFile()", function () {
-
-        it("Positive", async function () {
-
-            await targetStorageContainer.uploadFromFile(sourceLocalFile, s3Object);
-            const result = await targetStorageContainer.listObjects(s3Object);
-            assert.equal(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
-        });
-
-        it("Negative", async function () {
-
-            const file = "no/such/file.txt";
-
-            try {
-                await targetStorageContainer.uploadFromFile(file, s3Object);
-
-            } catch (error) {
-                expect(error).toBeDefined;
-                expect(error.message).toEqual(`ENOENT: no such file or directory, open '${file}'`);
-            }
+            assert.strictEqual(await sourceStorageContainer.getMetadata(s3ObjectName), undefined, "Non existent object should return no metadata")
         });
     });
 
@@ -516,11 +467,11 @@ describe("AWS Test", function () {
 
             const localDestinationFile = `${localFile}.txt`;
             await sourceStorageContainer.downloadAsset(localDestinationFile, sourceObject);
-            assert.equal(fs.existsSync(localDestinationFile), true, `Local file should exist: ${localDestinationFile}`);
+            assert.strictEqual(fs.existsSync(localDestinationFile), true, `Local file should exist: ${localDestinationFile}`);
 
             const result = await sourceStorageContainer.listObjects(sourceObject);
             const stats = fs.statSync(localDestinationFile);
-            assert.equal(result[0].contentLength, stats.size, `Local file size ${stats.size} should be ${result[0].contentLength}`);
+            assert.strictEqual(result[0].contentLength, stats.size, `Local file size ${stats.size} should be ${result[0].contentLength}`);
 
             fs.unlinkSync(localDestinationFile);
         });
@@ -534,8 +485,8 @@ describe("AWS Test", function () {
                 await sourceStorageContainer.downloadAsset(localDestinationFile, objectName);
 
             } catch (error) {
-                expect(error).toBeDefined();
-                expect(error.code).toEqual("NoSuchKey");
+                assert.isDefined(error, "Error should be thrown");
+                assert.strictEqual(error.code, "NoSuchKey", "Error code should be present");
 
                 fs.unlinkSync(localDestinationFile);
             }
@@ -587,7 +538,7 @@ describe("AWS Test", function () {
                 let url = await container.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
-                for (const regex of regexPresignedGetUrl) {
+                for (const regex of regexPresignedUrlGet) {
                     assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
                 }
             });
@@ -605,7 +556,122 @@ describe("AWS Test", function () {
                     });
 
                 } catch (error) {
-                    assert.deepStrictEqual(error, `CDN URL is not valid, it may be missing protocol: ${cdnUrl}`, `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
+                    assert.strictEqual(error, `CDN URL is not valid, it may be missing protocol: ${cdnUrl}`, `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
+                }
+            });
+        });
+    });
+
+    describe("#upload()", function () {
+
+        describe("Positive", function () {
+
+            it("Upload from local file", async function () {
+
+                await targetStorageContainer.upload(sourceLocalFile, s3Object);
+                const result = await targetStorageContainer.listObjects(s3Object);
+
+                assert.isDefined(result, "Result should be defined");
+                assert.strictEqual(result.length, 1, "Result should contain an object");
+                assert.isAtLeast(Object.keys(result[0]).length, 2, "Object should have 2 or more elements");
+                assert.strictEqual(result[0].name, s3Object, "Uploaded asset key name should match the passed in key name");
+                assert.isAbove(result[0].contentLength, 0, "Content Length value should be greater than 0");
+            });
+
+            it("Upload from URL", async function () {
+
+                await targetStorageContainer.upload(sourceAssetUrl, s3Object);
+                const result = await targetStorageContainer.listObjects(s3Object);
+
+                assert.isDefined(result, "Result should be defined");
+                assert.strictEqual(result.length, 1, "Result should contain an object");
+                assert.isAtLeast(Object.keys(result[0]).length, 2, "Object should have 2 or more elements");
+                assert.strictEqual(result[0].name, s3Object, "Uploaded asset key name should match the passed in key name");
+                assert.isAbove(result[0].contentLength, 0, "Content Length value should be greater than 0");
+            });
+
+            it("Force Multipart with a 500MB+ asset", async function () {
+
+                const sourceObjectLarge = "images/psd/Sunflower-text-500MB.psd";
+                s3Object = s3Object.replace("txt", "psd");
+
+                const sourceAssetUrlLarge = await sourceStorageContainer.presignGet(sourceObjectLarge, expiry);
+                await targetStorageContainer.upload(sourceAssetUrlLarge, s3Object);
+
+                const result = await targetStorageContainer.listObjects(s3Object);
+
+                assert.isDefined(result, "Result should be defined");
+                assert.strictEqual(result.length, 1, "Result should contain an object");
+                assert.isAtLeast(Object.keys(result[0]).length, 2, "Object should have 2 or more elements");
+                assert.strictEqual(result[0].name, s3Object, "Uploaded asset key name should match the passed in key name");
+                assert.isAtLeast(result[0].contentLength, 563700000, "Content Length value should be greater than 563700000");
+            });
+        });
+
+        describe("Negative", function () {
+
+            it("Bad URL syntax", async function () {
+
+                const url = "just a string";
+
+                try {
+                    await targetStorageContainer.upload(url, s3Object);
+
+                } catch (error) {
+                    assert.isDefined(error, "Error should be thrown");
+                    assert.strictEqual(error.code, "ENOENT", "Error code should match");
+                }
+            });
+
+            it("Missing protocol", async function () {
+
+                const url = "www.google.com";
+
+                try {
+                    await targetStorageContainer.upload(url, s3Object);
+
+                } catch (error) {
+                    assert.isDefined(error, "Error should be thrown");
+                    assert.strictEqual(error.code, "ENOENT", "Error code should match");
+                }
+            });
+
+            it("Incorrect protocol", async function () {
+
+                const url = "file://www.google.com";
+
+                try {
+                    await targetStorageContainer.upload(url, s3Object);
+
+                } catch (error) {
+                    assert.isDefined(error, "Error should be thrown");
+                    assert.strictEqual(error.code, "ENOENT", "Error code should match");
+                }
+            });
+
+            it("Domain does not exist", async function () {
+
+                const url = "https://fake.domain.com";
+
+                try {
+                    await targetStorageContainer.upload(url, s3Object);
+
+                } catch (error) {
+                    assert.isDefined(error, "Error should be thrown");
+                    assert.strictEqual(error, `Unable to request ${url}: 404`, "Error message should match");
+                }
+            });
+
+            it("Local file does not exist", async function () {
+
+                const file = "no/such/file.txt";
+
+                try {
+                    await targetStorageContainer.upload(file, s3Object);
+
+                } catch (error) {
+                    assert.isDefined(error, "Error should be thrown");
+                    assert.strictEqual(error.code, "ENOENT", "Error code should match");
                 }
             });
         });
