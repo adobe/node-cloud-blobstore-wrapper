@@ -595,7 +595,7 @@ describe("AWS Test", function () {
                 const sourceObjectLarge = "images/psd/Sunflower-text-500MB.psd";
                 s3Object = s3Object.replace("txt", "psd");
 
-                const sourceAssetUrlLarge = await sourceStorageContainer.presignGet(sourceObjectLarge, expiry);
+                const sourceAssetUrlLarge = await sourceStorageContainer.presignGet(sourceObjectLarge, 100000);
                 await targetStorageContainer.upload(sourceAssetUrlLarge, s3Object);
 
                 const result = await targetStorageContainer.listObjects(s3Object);

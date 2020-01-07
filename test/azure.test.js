@@ -453,7 +453,7 @@ describe("Azure Test", function () {
                 const sourceObjectLarge = "images/psd/Sunflower-text-500MB.psd";
                 blob = blob.replace("txt", "psd");
 
-                const sourceAssetUrlLarge = await sourceStorageContainer.presignGet(sourceObjectLarge, expiry);
+                const sourceAssetUrlLarge = await sourceStorageContainer.presignGet(sourceObjectLarge, 100000);
                 await targetStorageContainer.upload(sourceAssetUrlLarge, blob);
 
                 const result = await targetStorageContainer.listObjects(blob);
