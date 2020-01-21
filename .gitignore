@@ -1,6 +1,19 @@
-.serverless
-.webpack
+# various
 backup
-node_modules
 mocha.opts
+
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+serverless.yml
+.webpack
+
+# test
+.nyc_output
 coverage
+
+# others
+.vscode/*
