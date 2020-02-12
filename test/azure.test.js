@@ -449,7 +449,7 @@ describe("Azure Test", function () {
             });
 
             it("Force Multipart with a 500MB+ asset", async function () {
-
+                this.timeout(3000000);
                 const sourceObjectLarge = "images/psd/Sunflower-text-500MB.psd";
                 blob = blob.replace("txt", "psd");
 
@@ -462,7 +462,7 @@ describe("Azure Test", function () {
                 assert.strictEqual(result.length, 1, "Result should contain an object");
                 assert.isAtLeast(Object.keys(result[0]).length, 2, "Object should have 2 or more elements");
                 assert.strictEqual(result[0].name, blob, "Uploaded asset key name should match the passed in key name");
-                assert.isAtLeast(result[0].contentLength, 563700000, "Content Length value should be greater than 563700000");
+                assert.isAtLeast(result[0].contentLength, 500000000, "Content Length value should be greater than 500000000");
             });
         });
 
