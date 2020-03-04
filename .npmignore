@@ -12,3 +12,5 @@ build/
 
 # npm pack leftovers
 *.tgz
+# pipeline release config
+.releaserc.json
