@@ -516,9 +516,10 @@ describe("Azure Test", function () {
 
                 } catch (error) {
                     assert.isDefined(error, "Error should be thrown");
-                    assert.strictEqual(error, `Unable to request ${url}: 404`, "Error message should match");
+                    assert.strictEqual(error.code, "ECONNREFUSED")
+                    assert.strictEqual(error.message, `request to ${url}/ failed, reason: connect ECONNREFUSED 127.0.0.1:443`, "Error message should match");
                 }
-            });
+            }).timeout(70000);
 
             it("Local file does not exist", async function () {
 

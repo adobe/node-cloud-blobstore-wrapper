@@ -187,7 +187,7 @@ describe('Cloudstorage Test', function () {
                 new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
                 new RegExp(`.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/${awsContainerRegion}/s3/aws4_request.*`, "i"),
                 new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
                 new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
                 new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
             ];
@@ -226,7 +226,7 @@ describe('Cloudstorage Test', function () {
                 new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
                 new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
                 new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
                 new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
                 new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
             ];

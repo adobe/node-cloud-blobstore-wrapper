@@ -98,7 +98,7 @@ describe("AWS Test", function () {
             new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
             new RegExp(`.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/${containerRegion}/s3/aws4_request.*`, "i"),
             new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-            new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+            new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
             new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
             new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
         ];
@@ -114,7 +114,7 @@ describe("AWS Test", function () {
             new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
             new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
             new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-            new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+            new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
             new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
             new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
         ];
@@ -278,7 +278,7 @@ describe("AWS Test", function () {
                     new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
                     new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
                     new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                    new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                    new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
                     new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
                     new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
                 ];
@@ -307,7 +307,7 @@ describe("AWS Test", function () {
                         new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
                         new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
                         new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                        new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                        new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
                         new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
                         new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
                     ];
@@ -336,7 +336,7 @@ describe("AWS Test", function () {
                         new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
                         new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
                         new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                        new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                        new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
                         new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
                         new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
                     ];
@@ -365,7 +365,7 @@ describe("AWS Test", function () {
                         new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
                         new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
                         new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                        new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                        new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
                         new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
                         new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
                     ];
@@ -436,7 +436,7 @@ describe("AWS Test", function () {
                     new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
                     new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
                     new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                    new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                    new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
                     new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
                     new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
                 ];
@@ -469,7 +469,7 @@ describe("AWS Test", function () {
                     new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
                     new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
                     new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                    new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                    new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
                     new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
                     new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
                 ];
@@ -502,7 +502,7 @@ describe("AWS Test", function () {
                     new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
                     new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
                     new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                    new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                    new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
                     new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
                     new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
                 ];
@@ -535,7 +535,7 @@ describe("AWS Test", function () {
                     new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
                     new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
                     new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                    new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                    new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
                     new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
                     new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
                 ];
@@ -714,7 +714,7 @@ describe("AWS Test", function () {
                     new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
                     new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
                     new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                    new RegExp(`.*&X-Amz-Expires=${expiry}.*`, "i"),
+                    new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
                     new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
                     new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
                 ];
@@ -858,9 +858,10 @@ describe("AWS Test", function () {
 
                 } catch (error) {
                     assert.isDefined(error, "Error should be thrown");
-                    assert.strictEqual(error, `Unable to request ${url}: 404`, "Error message should match");
+                    assert.strictEqual(error.code, "ECONNREFUSED")
+                    assert.strictEqual(error.message, `request to ${url}/ failed, reason: connect ECONNREFUSED 127.0.0.1:443`, "Error message should match");
                 }
-            });
+            }).timeout(70000);
 
             it("Local file does not exist", async function () {
 
