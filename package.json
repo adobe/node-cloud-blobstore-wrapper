@@ -10,6 +10,7 @@
     "valid-url": "^1.0.9"
   },
   "author": "Adobe Systems Inc. <nui@adobe.com>",
+  "license": "Apache-2.0",
   "publishConfig": {
     "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-nui-release-local"
   },
@@ -25,7 +26,7 @@
     "nyc": "^15.0.1"
   },
   "scripts": {
-    "pretest": "eslint ./",
-    "test": "nyc --reporter=html --reporter=text mocha"
+    "test": "nyc --reporter=html --reporter=text mocha",
+    "posttest": "eslint ./"
   }
 }
