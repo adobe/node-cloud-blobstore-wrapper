@@ -19,7 +19,7 @@
     "url": "https://git.corp.adobe.com/nui/node-cloudstorage.git"
   },
   "devDependencies": {
-    "@adobe/eslint-config-asset-compute": "^1.0.0",
+    "@nui/eslint-config": "^1.0.4",
     "chai": "^4.2.0",
     "expect": "^25.4.0",
     "mocha": "^7.1.1",
