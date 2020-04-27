@@ -27,6 +27,7 @@
   },
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha",
-    "posttest": "eslint ./"
+    "posttest": "eslint ./",
+    "beautify": "eslint ./ --fix"
   }
 }
