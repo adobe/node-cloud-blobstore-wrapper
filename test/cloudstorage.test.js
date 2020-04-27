@@ -32,7 +32,7 @@ describe('Cloudstorage Test', function () {
     const sourceLocalFile = `${__dirname}/resources/00_README.txt`;
 
     const sourceStorageContainerName = "adobe-sample-asset-repository";
-    const targetStorageContainerName = "nui-automation";
+    const targetStorageContainerName = "asset-compute-automation";
 
     const awsContainerRegion = "us-east-1";
 
@@ -61,7 +61,7 @@ describe('Cloudstorage Test', function () {
         /* Loads storage credentials from local file or ENV pointing to a YAML file containing cloud storage credentials */
         if ((!process.env.AZURE_STORAGE_KEY && !process.env.AZURE_STORAGE_ACCOUNT) || (!process.env.AWS_ACCESS_KEY && !process.env.AWS_SECRET_KEY)) {
 
-            const credentialFile = process.env.NUI_CREDENTIALS_YAML || path.join(os.homedir(), ".nui/credentials.yaml");
+            const credentialFile = process.env.ASSET_COMPUTE_CREDENTIALS_YAML || path.join(os.homedir(), ".adobe-asset-compute/credentials.yaml");
             console.log(`  INFO: Cloud Storage environment variables are not set, trying file: ${credentialFile}\n`);
 
             if (fs.existsSync(credentialFile)) {

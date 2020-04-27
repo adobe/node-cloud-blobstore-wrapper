@@ -32,7 +32,7 @@ describe("AWS Test", function () {
     const sourceObject = "documents/txt/00_README.txt";
     const sourceStorageContainerName = "adobe-sample-asset-repository";
     const sourceLocalFile = `${__dirname}/resources/00_README.txt`;
-    const targetStorageContainerName = "nui-automation";
+    const targetStorageContainerName = "asset-compute-automation";
     const expiry = 1000;
     const containerRegion = "us-east-1";
     const cdnUrl = "http://fake.site.com:8080";
@@ -58,7 +58,7 @@ describe("AWS Test", function () {
         /* Loads storage credentials from local file or ENV pointing to a YAML file containing cloud storage credentials */
         if (!process.env.AWS_ACCESS_KEY && !process.env.AWS_SECRET_KEY) {
 
-            const credentialFile = process.env.NUI_CREDENTIALS_YAML || path.join(os.homedir(), ".nui/credentials.yaml");
+            const credentialFile = process.env.ASSET_COMPUTE_CREDENTIALS_YAML || path.join(os.homedir(), ".asset-compute/credentials.yaml");
             console.log(`  INFO: AWS_ACCESS_KEY and/or AWS_SECRET_KEY are not set, trying file: ${credentialFile}\n`);
 
             if (fs.existsSync(credentialFile)) {

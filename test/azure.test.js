@@ -32,7 +32,7 @@ describe("Azure Test", function () {
     const sourceBlob = "documents/txt/00_README.txt";
     const sourceStorageContainerName = "adobe-sample-asset-repository";
     const sourceLocalFile = `${__dirname}/resources/00_README.txt`;
-    const targetStorageContainerName = "nui-automation";
+    const targetStorageContainerName = "asset-compute-automation";
     const expiry = 1000;
     const cdnUrl = "http://fake.site.com:8080";
 
@@ -57,7 +57,7 @@ describe("Azure Test", function () {
         /* Loads storage credentials from local file or ENV pointing to a YAML file containing cloud storage credentials */
         if (!process.env.AZURE_STORAGE_KEY && !process.env.AZURE_STORAGE_ACCOUNT) {
 
-            const credentialFile = process.env.NUI_CREDENTIALS_YAML || path.join(os.homedir(), ".nui/credentials.yaml");
+            const credentialFile = process.env.ASSET_COMPUTE_CREDENTIALS_YAML || path.join(os.homedir(), ".asset-compute/credentials.yaml");
             console.log(`  INFO: AZURE_STORAGE_KEY and/or AZURE_STORAGE_ACCOUNT are not set, trying file: ${credentialFile}\n`);
 
             if (fs.existsSync(credentialFile)) {

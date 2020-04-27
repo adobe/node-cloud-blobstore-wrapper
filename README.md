@@ -1,6 +1,3 @@
-<!--- when a new release happens, the VERSION and URL in the badge have to be manually updated because it's a private registry --->
-[![npm version](https://img.shields.io/badge/%40nui%2Fnode--cloudstorage-5.0.0-blue.svg)](https://artifactory.corp.adobe.com/artifactory/npm-nui-release/@nui/node-cloudstorage/-/@nui/node-cloudstorage-5.0.0.tgz)
-
 # node-cloudstorage
 General Cloud Storage library currently for Azure and AWS.
 
@@ -117,7 +114,7 @@ const booleanResult = await awsSourceStorageContainer.validate();
 When unit tests are run, they require credentials which you can provide one of two ways:
 
 1. Local Configuration File
-You can either place `credentials.yaml` in `~/.nui` (Ex: `~/.nui/credentials.yaml`) or export the environment variable `NUI_CREDENTIALS_YAML` with the fully qualified path of `credentials.yaml`
+You can either place `credentials.yaml` in `~/.nui` (Ex: `~/.asset-compute/credentials.yaml`) or export the environment variable `ASSET_COMPUTE_CREDENTIALS_YAML` with the fully qualified path of `credentials.yaml`
 
 1. Environment Variables
 \
