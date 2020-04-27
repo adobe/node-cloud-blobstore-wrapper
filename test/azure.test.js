@@ -57,7 +57,7 @@ describe("Azure Test", function () {
         /* Loads storage credentials from local file or ENV pointing to a YAML file containing cloud storage credentials */
         if (!process.env.AZURE_STORAGE_KEY && !process.env.AZURE_STORAGE_ACCOUNT) {
 
-            const credentialFile = process.env.ASSET_COMPUTE_CREDENTIALS_YAML || path.join(os.homedir(), ".asset-compute/credentials.yaml");
+            const credentialFile = process.env.ASSET_COMPUTE_CREDENTIALS_YAML || path.join(os.homedir(), ".adobe-asset-compute/credentials.yaml");
             console.log(`  INFO: AZURE_STORAGE_KEY and/or AZURE_STORAGE_ACCOUNT are not set, trying file: ${credentialFile}\n`);
 
             if (fs.existsSync(credentialFile)) {

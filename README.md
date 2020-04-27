@@ -114,7 +114,7 @@ const booleanResult = await awsSourceStorageContainer.validate();
 When unit tests are run, they require credentials which you can provide one of two ways:
 
 1. Local Configuration File
-You can either place `credentials.yaml` in `~/.nui` (Ex: `~/.asset-compute/credentials.yaml`) or export the environment variable `ASSET_COMPUTE_CREDENTIALS_YAML` with the fully qualified path of `credentials.yaml`
+You can either place `credentials.yaml` in `~/.adobe-asset-compute` (Ex: `~/.adobe-asset-compute/credentials.yaml`) or export the environment variable `ASSET_COMPUTE_CREDENTIALS_YAML` with the fully qualified path of `credentials.yaml`
 
 1. Environment Variables
 \

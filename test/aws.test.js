@@ -58,7 +58,7 @@ describe("AWS Test", function () {
         /* Loads storage credentials from local file or ENV pointing to a YAML file containing cloud storage credentials */
         if (!process.env.AWS_ACCESS_KEY && !process.env.AWS_SECRET_KEY) {
 
-            const credentialFile = process.env.ASSET_COMPUTE_CREDENTIALS_YAML || path.join(os.homedir(), ".asset-compute/credentials.yaml");
+            const credentialFile = process.env.ASSET_COMPUTE_CREDENTIALS_YAML || path.join(os.homedir(), ".adobe-asset-compute/credentials.yaml");
             console.log(`  INFO: AWS_ACCESS_KEY and/or AWS_SECRET_KEY are not set, trying file: ${credentialFile}\n`);
 
             if (fs.existsSync(credentialFile)) {
