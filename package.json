@@ -5,11 +5,12 @@
   "dependencies": {
     "@azure/storage-blob": "^10.5.0",
     "@nui/node-fetch-retry": "^7.0.0",
-    "aws-sdk": "^2.569.0",
-    "fs-extra": "^8.1.0",
+    "aws-sdk": "^2.662.0",
+    "fs-extra": "^9.0.0",
     "valid-url": "^1.0.9"
   },
-  "author": "Adobe Systems Inc. <nui@adobe.com>",
+  "author": "Adobe Inc.",
+  "license": "Apache-2.0",
   "publishConfig": {
     "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-nui-release-local"
   },
@@ -18,14 +19,24 @@
     "url": "https://git.corp.adobe.com/nui/node-cloudstorage.git"
   },
   "devDependencies": {
-    "@nui/eslint-config": "^1.0.2",
+    "@nui/eslint-config": "^1.0.4",
     "chai": "^4.2.0",
-    "expect": "^24.9.0",
-    "mocha": "^6.2.2",
-    "nyc": "^14.1.1"
+    "expect": "^25.4.0",
+    "mocha": "^7.1.2",
+    "nyc": "^15.0.1"
   },
+  "keywords": [
+    "adobe",
+    "aws",
+    "azure",
+    "storage",
+    "cloud",
+    "blob",
+    "bucket"
+  ],
   "scripts": {
-    "pretest": "eslint ./",
-    "test": "nyc --reporter=html --reporter=text mocha"
+    "test": "nyc --reporter=html --reporter=text mocha",
+    "posttest": "eslint ./",
+    "beautify": "eslint ./ --fix"
   }
 }
