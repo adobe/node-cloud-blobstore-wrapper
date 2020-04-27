@@ -117,10 +117,7 @@ const booleanResult = await awsSourceStorageContainer.validate();
 When unit tests are run, they require credentials which you can provide one of two ways:
 
 1. Local Configuration File
-\
-Follow these instructions to [setup `credentials.yaml`](https://git.corp.adobe.com/nui/hanaana/tree/master/toughday#configuring-required-credentials)
-\
-Once this is done, you can either place `credentials.yaml` in `~/.nui` (Ex: `~/.nui/credentials.yaml`) or export the environment variable `NUI_CREDENTIALS_YAML` with the fully qualified path of `credentials.yaml`
+You can either place `credentials.yaml` in `~/.nui` (Ex: `~/.nui/credentials.yaml`) or export the environment variable `NUI_CREDENTIALS_YAML` with the fully qualified path of `credentials.yaml`
 
 1. Environment Variables
 \
@@ -142,3 +139,11 @@ For AWS, export the following environment variables with their related values:
 ```
 npm test
 ```
+
+### Contributing
+
+Contributions are welcomed! Read the [Contributing Guide](./.github/CONTRIBUTING.md) for more information.
+
+### Licensing
+
+This project is licensed under the Apache V2 License. See [LICENSE](LICENSE) for more information.
