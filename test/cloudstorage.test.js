@@ -32,7 +32,7 @@ describe('Cloudstorage Test', function () {
     const sourceLocalFile = `${__dirname}/resources/00_README.txt`;
 
     const sourceStorageContainerName = "adobe-sample-asset-repository";
-    const targetStorageContainerName = "asset-compute-automation";
+    const targetStorageContainerName = "nui-automation";
 
     const awsContainerRegion = "us-east-1";
 

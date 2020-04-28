@@ -31,7 +31,7 @@ describe("AWS Test", function () {
     const sourceObject = "documents/txt/00_README.txt";
     const sourceStorageContainerName = "adobe-sample-asset-repository";
     const sourceLocalFile = `${__dirname}/resources/00_README.txt`;
-    const targetStorageContainerName = "asset-compute-automation";
+    const targetStorageContainerName = "nui-automation";
     const expiry = 1000;
     const containerRegion = "us-east-1";
     const cdnUrl = "http://fake.site.com:8080";
