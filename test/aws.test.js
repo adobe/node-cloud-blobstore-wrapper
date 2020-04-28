@@ -79,7 +79,7 @@ describe("AWS Test", function () {
             sourceStorageContainerName,
             {bucketRegion: containerRegion});
 
-        sourceAssetUrl = await sourceStorageContainer.presignGet(sourceObject, 600000);
+        sourceAssetUrl = sourceStorageContainer.presignGet(sourceObject, 600000);
 
         /* Create target storage container object */
         targetStorageContainer = new aws({
@@ -247,7 +247,7 @@ describe("AWS Test", function () {
 
             it("Presigning should be valid", async function () {
 
-                let url = await targetStorageContainer.presignPut(s3Object, expiry);
+                let url = targetStorageContainer.presignPut(s3Object, expiry);
                 url = decodeURIComponent(decodeURI(url));
                 for (const regex of regexPresignedUrlPut) {
                     assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
@@ -265,7 +265,7 @@ describe("AWS Test", function () {
                     secretAccessKey: process.env.AWS_SECRET_KEY},
                     `${targetStorageContainerName}-frankfurt`);
 
-                let url = await container.presignPut(s3Object, expiry);
+                let url = container.presignPut(s3Object, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 const regexDifferentRegion = [
@@ -294,7 +294,7 @@ describe("AWS Test", function () {
                     targetStorageContainerName,
                     { bucketRegion: "eu-central-1" });
 
-                    let url = await container.presignPut(s3Object, expiry);
+                    let url = container.presignPut(s3Object, expiry);
                     url = decodeURIComponent(decodeURI(url));
 
                     const regexDifferentRegion = [
@@ -323,7 +323,7 @@ describe("AWS Test", function () {
                     targetStorageContainerName,
                     { bucketRegion: "us-east-1" });
 
-                    let url = await container.presignPut(s3Object, expiry);
+                    let url = container.presignPut(s3Object, expiry);
                     url = decodeURIComponent(decodeURI(url));
 
                     const regexDifferentRegion = [
@@ -352,7 +352,7 @@ describe("AWS Test", function () {
                     targetStorageContainerName,
                     { bucketRegion: "us-west-1" });
 
-                    let url = await container.presignPut(s3Object, expiry);
+                    let url = container.presignPut(s3Object, expiry);
                     url = decodeURIComponent(decodeURI(url));
 
                     const regexDifferentRegion = [
@@ -381,7 +381,7 @@ describe("AWS Test", function () {
                 targetStorageContainerName,
                 {region: "fake-region-1"});
 
-                let url = await container.presignPut(s3Object, expiry);
+                let url = container.presignPut(s3Object, expiry);
                 url = decodeURIComponent(decodeURI(url));
                 for (const regex of regexPresignedUrlPut) {
                     assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
@@ -400,7 +400,7 @@ describe("AWS Test", function () {
 
             it("Presigning should be valid", async function () {
 
-                let url = await sourceStorageContainer.presignGet(sourceObject, expiry);
+                let url = sourceStorageContainer.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 for (const regex of regexPresignedUrlGet) {
@@ -423,7 +423,7 @@ describe("AWS Test", function () {
                     secretAccessKey: process.env.AWS_SECRET_KEY},
                 `${sourceStorageContainerName}-frankfurt`);
 
-                let url = await container.presignGet(sourceObject, expiry);
+                let url = container.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 const regexDifferentRegion = [
@@ -456,7 +456,7 @@ describe("AWS Test", function () {
                     sourceStorageContainerName,
                     { bucketRegion: "us-east-1" });
 
-                let url = await container.presignGet(sourceObject, expiry);
+                let url = container.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 const regexDifferentRegion = [
@@ -522,7 +522,7 @@ describe("AWS Test", function () {
                     `${sourceStorageContainerName}-frankfurt`,
                     { bucketRegion: "eu-central-1" });
 
-                let url = await container.presignGet(sourceObject, expiry);
+                let url = container.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 const regexDifferentRegion = [

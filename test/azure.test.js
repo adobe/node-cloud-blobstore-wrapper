@@ -203,7 +203,7 @@ describe("Azure Test", function () {
 
             it("See if URL syntax is correct", async function () {
 
-                let url = await targetStorageContainer.presignPut(targetBlob, expiry);
+                let url = targetStorageContainer.presignPut(targetBlob, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 for (const regex of regexPresignedUrlPut) {
@@ -219,7 +219,7 @@ describe("Azure Test", function () {
 
             it("See if URL syntax is correct", async function () {
 
-                let url = await sourceStorageContainer.presignGet(sourceBlob, expiry);
+                let url = sourceStorageContainer.presignGet(sourceBlob, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 for (const regex of regexPresignedUrlGet) {
@@ -275,7 +275,7 @@ describe("Azure Test", function () {
                 "fakeBucket");
 
                 try {
-                    await container.validate();
+                    container.validate();
                 } catch (error) {
                     assert.strictEqual(error.body.Code, "InvalidResourceName", `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
                 }
@@ -360,7 +360,7 @@ describe("Azure Test", function () {
                     cdnUrl: cdnUrl
                 });
 
-                let url = await container.presignGet(sourceBlob, expiry);
+                let url = container.presignGet(sourceBlob, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 const regexDifferentRegion = [
@@ -389,7 +389,7 @@ describe("Azure Test", function () {
                     cdnUrl: "\n"
                 });
 
-                let url = await container.presignGet(sourceBlob, expiry);
+                let url = container.presignGet(sourceBlob, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 for (const regex of regexPresignedUrlGet) {
@@ -449,7 +449,7 @@ describe("Azure Test", function () {
                 const sourceObjectLarge = "images/psd/Sunflower-text-500MB.psd";
                 blob = blob.replace("txt", "psd");
 
-                const sourceAssetUrlLarge = await sourceStorageContainer.presignGet(sourceObjectLarge, 100000);
+                const sourceAssetUrlLarge = sourceStorageContainer.presignGet(sourceObjectLarge, 100000);
                 await targetStorageContainer.upload(sourceAssetUrlLarge, blob);
 
                 const result = await targetStorageContainer.listObjects(blob);
