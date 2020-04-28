@@ -1,5 +1,6 @@
 # node-cloudstorage
 General Cloud Storage library currently for Azure and AWS.
+Currently only supports Linux and macOS.
 
 # Summary
 This is an agnostic wrapper for various cloud storage providers (currently: AWS and Azure) that help with uploading, downloading, generating pre-signed urls, listing objects in storage, storage validation, and retrieve metadata about an object in storage.

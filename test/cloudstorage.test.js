@@ -247,6 +247,7 @@ describe('Cloudstorage Test', function () {
             it("Azure upload from URL", async function () {
                 await azureTargetStorageContainer.upload(azureSourceAssetUrl, targetCloudStorageAsset);
                 const azureUrlResult = await azureTargetStorageContainer.listObjects(targetCloudStorageAsset);
+                assert.ok(azureUrlResult.length > 0);
                 assert.strictEqual(azureUrlResult[0].name, targetCloudStorageAsset, `Uploaded asset ${azureUrlResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
 
             });
@@ -254,6 +255,7 @@ describe('Cloudstorage Test', function () {
             it("AWS upload from URL", async function () {
                 await awsTargetStorageContainer.upload(awsSourceAssetUrl, targetCloudStorageAsset);
                 const awsUrlResult = await awsTargetStorageContainer.listObjects(targetCloudStorageAsset);
+                assert.ok(awsUrlResult.length > 0);
                 assert.strictEqual(awsUrlResult[0].name, targetCloudStorageAsset, `Uploaded asset ${awsUrlResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
 
             });
@@ -261,6 +263,7 @@ describe('Cloudstorage Test', function () {
             it("Azure upload from local file", async function () {
                 await azureTargetStorageContainer.upload(sourceLocalFile, targetCloudStorageAsset);
                 const azureLocalResult = await azureTargetStorageContainer.listObjects(targetCloudStorageAsset);
+                assert.ok(azureUrlResult.length > 0);
                 assert.strictEqual(azureLocalResult[0].name, targetCloudStorageAsset, `Uploaded asset ${azureLocalResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
 
             });
@@ -269,6 +272,7 @@ describe('Cloudstorage Test', function () {
 
                 await awsTargetStorageContainer.upload(sourceLocalFile, targetCloudStorageAsset);
                 const awsLocalResult = await awsTargetStorageContainer.listObjects(targetCloudStorageAsset);
+                assert.ok(azureUrlResult.length > 0);
                 assert.strictEqual(awsLocalResult[0].name, targetCloudStorageAsset, `Uploaded asset ${awsLocalResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
             });
         });
@@ -280,6 +284,7 @@ describe('Cloudstorage Test', function () {
 
             const azureUrlResult = await azureSourceStorageContainer.listObjects(sourceCloudStorageAsset);
             const azureStats = fs.statSync(azureLocalDestinationFile);
+            assert.ok(azureUrlResult.length > 0);
             assert.strictEqual(azureUrlResult[0].contentLength, azureStats.size, `Local file size ${azureStats.size} should be ${azureUrlResult[0].contentLength}`);
 
             fs.unlinkSync(azureLocalDestinationFile);
@@ -290,6 +295,7 @@ describe('Cloudstorage Test', function () {
 
             const awsUrlResult = await awsSourceStorageContainer.listObjects(sourceCloudStorageAsset);
             const awsStats = fs.statSync(awsLocalDestinationFile);
+            assert.ok(awsUrlResult.length > 0);
             assert.strictEqual(awsUrlResult[0].contentLength, awsStats.size, `Local file size ${awsStats.size} should be ${awsUrlResult[0].contentLength}`);
 
             fs.unlinkSync(awsLocalDestinationFile);
