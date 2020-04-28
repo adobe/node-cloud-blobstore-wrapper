@@ -1,5 +1,5 @@
 {
-  "name": "@adobe/cloudstorage",
+  "name": "@adobe/cloud-blob-storage",
   "version": "1.0.0",
   "description": "Cloud Storage library",
   "dependencies": {
