@@ -25,6 +25,9 @@ const aws = require('../lib/aws.js').ContainerAws;
 
 
 describe("AWS Test", function () {
+    console.log('******ENV VAR TEST T');
+    console.log(process.env.TANIA_ENV_VAR_TEST);
+    console.log('******ENV VAR TEST T');
 
     const DELIVERY_TIMEOUT = 30000; // max time to wait for test
     this.timeout(DELIVERY_TIMEOUT); // Timeout length
