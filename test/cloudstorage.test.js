@@ -263,7 +263,7 @@ describe('Cloudstorage Test', function () {
             it("Azure upload from local file", async function () {
                 await azureTargetStorageContainer.upload(sourceLocalFile, targetCloudStorageAsset);
                 const azureLocalResult = await azureTargetStorageContainer.listObjects(targetCloudStorageAsset);
-                assert.ok(azureUrlResult.length > 0);
+                assert.ok(azureLocalResult.length > 0);
                 assert.strictEqual(azureLocalResult[0].name, targetCloudStorageAsset, `Uploaded asset ${azureLocalResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
 
             });
@@ -272,7 +272,7 @@ describe('Cloudstorage Test', function () {
 
                 await awsTargetStorageContainer.upload(sourceLocalFile, targetCloudStorageAsset);
                 const awsLocalResult = await awsTargetStorageContainer.listObjects(targetCloudStorageAsset);
-                assert.ok(azureUrlResult.length > 0);
+                assert.ok(awsLocalResult.length > 0);
                 assert.strictEqual(awsLocalResult[0].name, targetCloudStorageAsset, `Uploaded asset ${awsLocalResult[0].name} should exist in destination: ${targetCloudStorageAsset}`);
             });
         });
