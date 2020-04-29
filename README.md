@@ -1,4 +1,6 @@
 # node-cloudstorage
+[![Version](https://img.shields.io/npm/v/@adobe/cloud-blobstore-wrapper.svg)](https://npmjs.org/package/@adobe/cloud-blobstore-wrapper)
+
 General Cloud Storage library currently for Azure and AWS.
 Currently only supports Linux and macOS.
 
