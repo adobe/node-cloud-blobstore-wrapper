@@ -275,7 +275,7 @@ describe("Azure Test", function () {
                 "fakeBucket");
 
                 try {
-                    container.validate();
+                    await container.validate();
                 } catch (error) {
                     assert.strictEqual(error.body.Code, "InvalidResourceName", `Some other error may have occurred : ${JSON.stringify(error, null, 4)}`);
                 }
