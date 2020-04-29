@@ -57,7 +57,7 @@ describe("Azure Test", function () {
         /* Loads storage credentials from local file or ENV pointing to a YAML file containing cloud storage credentials */
         if (!process.env.AZURE_STORAGE_KEY && !process.env.AZURE_STORAGE_ACCOUNT) {
 
-            const credentialFile = process.env.NUI_CREDENTIALS_YAML || path.join(os.homedir(), ".nui/credentials.yaml");
+            const credentialFile = process.env.ASSET_COMPUTE_CREDENTIALS_YAML || path.join(os.homedir(), ".adobe-asset-compute/credentials.yaml");
             console.log(`  INFO: AZURE_STORAGE_KEY and/or AZURE_STORAGE_ACCOUNT are not set, trying file: ${credentialFile}\n`);
 
             if (fs.existsSync(credentialFile)) {
@@ -203,7 +203,7 @@ describe("Azure Test", function () {
 
             it("See if URL syntax is correct", async function () {
 
-                let url = await targetStorageContainer.presignPut(targetBlob, expiry);
+                let url = targetStorageContainer.presignPut(targetBlob, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 for (const regex of regexPresignedUrlPut) {
@@ -219,7 +219,7 @@ describe("Azure Test", function () {
 
             it("See if URL syntax is correct", async function () {
 
-                let url = await sourceStorageContainer.presignGet(sourceBlob, expiry);
+                let url = sourceStorageContainer.presignGet(sourceBlob, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 for (const regex of regexPresignedUrlGet) {
@@ -360,7 +360,7 @@ describe("Azure Test", function () {
                     cdnUrl: cdnUrl
                 });
 
-                let url = await container.presignGet(sourceBlob, expiry);
+                let url = container.presignGet(sourceBlob, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 const regexDifferentRegion = [
@@ -389,7 +389,7 @@ describe("Azure Test", function () {
                     cdnUrl: "\n"
                 });
 
-                let url = await container.presignGet(sourceBlob, expiry);
+                let url = container.presignGet(sourceBlob, expiry);
                 url = decodeURIComponent(decodeURI(url));
 
                 for (const regex of regexPresignedUrlGet) {
@@ -449,7 +449,7 @@ describe("Azure Test", function () {
                 const sourceObjectLarge = "images/psd/Sunflower-text-500MB.psd";
                 blob = blob.replace("txt", "psd");
 
-                const sourceAssetUrlLarge = await sourceStorageContainer.presignGet(sourceObjectLarge, 100000);
+                const sourceAssetUrlLarge = sourceStorageContainer.presignGet(sourceObjectLarge, 100000);
                 await targetStorageContainer.upload(sourceAssetUrlLarge, blob);
 
                 const result = await targetStorageContainer.listObjects(blob);
