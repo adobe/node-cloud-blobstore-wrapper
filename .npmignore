@@ -9,6 +9,7 @@ Jenkinsfile
 .eslintignore
 stryker.conf.js
 build/
+.travis.yml
 
 # npm pack leftovers
 *.tgz
