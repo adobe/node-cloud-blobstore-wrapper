@@ -1,4 +1,4 @@
-# node-cloudstorage
+# node-cloud-blobstore-wrapper
 [![Version](https://img.shields.io/npm/v/@adobe/cloud-blobstore-wrapper.svg)](https://npmjs.org/package/@adobe/cloud-blobstore-wrapper)
 
 General Cloud Storage library currently for Azure and AWS.
@@ -9,11 +9,11 @@ This is an agnostic wrapper for various cloud storage providers (currently: AWS 
 
 # Install
 ```
-npm install --save node-cloudstorage
+npm install --save @adobe/cloud-blobstore-wrapper
 ```
 
 # Use
-```
+```js
 const CloudStorage = require('CloudStorage');
 ```
 
@@ -21,7 +21,7 @@ Credentials for the cloud storage must be provided.
 
 ## Azure
 Azure credentials requires an object containing the attributes `accountKey` and `accountName` with their related values.
-```
+```js
 const CloudStorage = require('CloudStorage');
 
 const azureAccountKey = "myAzureAccountKey";
@@ -37,7 +37,7 @@ const cloudStorage = new CloudStorage({
 
 ## AWS
 AWS credentials requires an object containing the attributes `accessKeyId` and `secretAccessKey` with their related values.
-```
+```js
 const CloudStorage = require('CloudStorage');
 
 const awsAccessKeyId = "myAwsAccessKeyId";
@@ -53,7 +53,7 @@ const cloudStorage = new CloudStorage({
 
 ## Upload
 Upload can take either a local file path or a URL as the source asset that will be uploaded
-```
+```js
 const awsTargetKey = "my/aws/upload/path/uploaded-asset.jpg";
 
 /* Using a URL as the source to upload */
@@ -66,7 +66,7 @@ await cloudStorage.upload(sourceAssetLocalPath, awsTargetKey);
 ```
 
 ## Download
-```
+```js
 const localDestinationFile = "/User/myUser/downloads/myAsset.jpg";
 const awsSourceCloudStorageAssetPath = "my/asset/to/download.jpg";
 
@@ -74,7 +74,7 @@ await awsSourceStorageContainer.downloadAsset(localDestinationFile, awsSourceClo
 ```
 
 ## Presigned URLs
-```
+```js
 const awsSourceCloudStorageAssetPath = "my/asset/to/download.jpg";
 const expiry = 60000; /* Length the presigned URL has to live once created */
 
@@ -88,7 +88,7 @@ const preSignedPutUrl = awsSourceStorageContainer.presignPut(awsSourceCloudStora
 ## Objects in Cloud Storage
 `prefix` is optional and can also be a single object instead of a path
 Returns an array of objects
-```
+```js
 const prefixPath = "my/cloud/storage/asset/path/containing/multiple/objects";
 const resultsPath = await awsSourceStorageContainer.listObjects(prefixPath);
 
@@ -100,14 +100,14 @@ const results = await awsSourceStorageContainer.listObjects();
 ```
 
 ## Object Metadata
-```
+```js
 const objectKey = "my/cloud/storage/single/asset.jpg";
 const metadata = await awsSourceStorageContainer.getMetadata(objectKey);
 ```
 
 ## Validate Cloud Storage Container
 This does a simple check to see if the container exists by requesting the containers ACL
-```
+```js
 const booleanResult = await awsSourceStorageContainer.validate();
 ```
 
@@ -136,7 +136,7 @@ For AWS, export the following environment variables with their related values:
 `AWS_SECRET_KEY`
 
 ## Running
-```
+```js
 npm test
 ```
 
