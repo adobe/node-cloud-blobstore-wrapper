@@ -16,7 +16,7 @@
     "url": "https://github.com/adobe/cloud-blobstore-wrapper.git"
   },
   "devDependencies": {
-    "@adobe/eslint-config-asset-compute": "^1.1.0",
+    "@adobe/eslint-config-asset-compute": "^1.2.0",
     "chai": "^4.2.0",
     "expect": "^25.5.0",
     "mocha": "^7.1.2",
@@ -34,6 +34,8 @@
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha",
     "posttest": "eslint ./",
-    "beautify": "eslint ./ --fix"
+    "beautify": "eslint ./ --fix",
+    "dep-license-details": "license-checker -unknown --out dependencies-licenses.log",
+    "dep-license-list": "license-checker --summary -unknown"
   }
 }
