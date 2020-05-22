@@ -398,7 +398,7 @@ describe("AWS Test", function () {
 
         describe("Positive", function () {
 
-            it"Presigning should be valid", async function () {
+            it("Presigning should be valid", async function () {
 
                 let url = sourceStorageContainer.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
