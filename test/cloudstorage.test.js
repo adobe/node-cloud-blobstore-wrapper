@@ -54,6 +54,11 @@ describe('Cloudstorage Test', function () {
     date = `${(date.getMonth() + 1)}-${(date.getDate() + 1)}-${date.getHours()}-${date.getMinutes()}`;
     const scriptName = __filename.split(`${__dirname}/`).pop();
 
+    console.log("QQQQQQQQQQQQQQQQQQQQ")
+    console.log("DIR:", __dirname)
+    console.log("FILENAME:", __filename)
+    console.log("SCRIPTNAME:", scriptName)
+    console.log("QQQQQQQQQQQQQQQQQQQQ")
     targetCloudStoragePath = `${targetCloudStoragePath}${scriptName}/${date}/`;
 
     before("Check Credentials", function () {
@@ -231,14 +236,14 @@ describe('Cloudstorage Test', function () {
             azureUrl = decodeURIComponent(decodeURI(azureUrl));
 
             for (const regex of regexAzurePresignedUrlPut) {
-                assert.strictEqual(regex.test(azureUrl), true, `Presigned URL should contain ${regex}`);
+                assert.strictEqual(regex.test(azureUrl), true, `Presigned Azure URL should contain ${regex}`);
             }
 
             let awsUrl = awsTargetStorageContainer.presignPut(targetCloudStorageAsset, expiry);
             awsUrl = decodeURIComponent(decodeURI(awsUrl));
 
             for (const regex of regexAwsPresignedUrlPut) {
-                assert.strictEqual(regex.test(awsUrl), true, `Presigned URL should contain ${regex}`);
+                assert.strictEqual(regex.test(awsUrl), true, `Presigned AWS URL should contain ${regex}`);
             }
         });
 
