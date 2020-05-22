@@ -52,7 +52,8 @@ describe('Cloudstorage Test', function () {
     /* Create destination blob prefix for run */
     let date = new Date();
     date = `${(date.getMonth() + 1)}-${(date.getDate() + 1)}-${date.getHours()}-${date.getMinutes()}`;
-    const scriptName = __filename.split(`${__dirname}/`).pop();
+    // const scriptName = __filename.split(`${__dirname}/`).pop();
+    const scriptName = path.basename(__filename);
 
     console.log("QQQQQQQQQQQQQQQQQQQQ")
     console.log("DIR:", __dirname)
