@@ -1,14 +1,14 @@
 /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
 /* eslint-env mocha */
 
@@ -73,9 +73,9 @@ describe("Azure Test", function () {
 
         /* Create source storage container object */
         sourceStorageContainer = new azure({
-                accountName: process.env.AZURE_STORAGE_ACCOUNT,
-                accountKey: process.env.AZURE_STORAGE_KEY},
-            sourceStorageContainerName);
+            accountName: process.env.AZURE_STORAGE_ACCOUNT,
+            accountKey: process.env.AZURE_STORAGE_KEY},
+        sourceStorageContainerName);
 
         sourceAssetUrl = sourceStorageContainer.presignGet(sourceBlob, 600000);
 
@@ -83,7 +83,7 @@ describe("Azure Test", function () {
         targetStorageContainer = new azure({
             accountName: process.env.AZURE_STORAGE_ACCOUNT,
             accountKey: process.env.AZURE_STORAGE_KEY},
-            targetStorageContainerName);
+        targetStorageContainerName);
 
         regexPresignedUrlPut = [
             new RegExp(`^https:\\/\\/${process.env.AZURE_STORAGE_ACCOUNT}\\.blob\\.core\\.windows\\.net/${targetStorageContainerName}/${targetBlob}\\?.*`, "i"),
@@ -127,7 +127,7 @@ describe("Azure Test", function () {
                     new azure({
                         accountName: "\n",
                         accountKey: process.env.AZURE_STORAGE_KEY},
-                        sourceStorageContainerName);
+                    sourceStorageContainerName);
 
                 } catch (error) {
                     assert.strictEqual(error, "Authentication was not provided", "Invisible characters should be caught");
@@ -137,7 +137,7 @@ describe("Azure Test", function () {
                     new azure({
                         accountName: process.env.AZURE_STORAGE_ACCOUNT,
                         accountKey: "\t"},
-                        sourceStorageContainerName);
+                    sourceStorageContainerName);
 
                 } catch (error) {
                     assert.strictEqual(error, "Authentication was not provided", "Invisible characters should be caught");
@@ -147,7 +147,7 @@ describe("Azure Test", function () {
                     new azure({
                         accountName: process.env.AZURE_STORAGE_ACCOUNT,
                         accountKey: process.env.AZURE_STORAGE_KEY},
-                        "\r");
+                    "\r");
 
                 } catch (error) {
                     assert.strictEqual(error, "Azure container name was not provided", "Invisible characters should be caught");
@@ -223,7 +223,7 @@ describe("Azure Test", function () {
                 url = decodeURIComponent(decodeURI(url));
 
                 for (const regex of regexPresignedUrlGet) {
-                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
+                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
                 }
             });
         });
@@ -300,7 +300,7 @@ describe("Azure Test", function () {
         it("Negative", async function () {
 
             const blobName = "fakeBlob";
-            assert.strictEqual(await sourceStorageContainer.getMetadata(blobName), undefined, "Non existent object should return no metadata")
+            assert.strictEqual(await sourceStorageContainer.getMetadata(blobName), undefined, "Non existent object should return no metadata");
         });
     });
 
@@ -512,7 +512,7 @@ describe("Azure Test", function () {
 
                 } catch (error) {
                     assert.isDefined(error, "Error should be thrown");
-                    assert.strictEqual(error.code, "ECONNREFUSED")
+                    assert.strictEqual(error.code, "ECONNREFUSED");
                     assert.strictEqual(error.message, `request to ${url}/ failed, reason: connect ECONNREFUSED 127.0.0.1:443`, "Error message should match");
                 }
             }).timeout(70000);
