@@ -24,7 +24,7 @@ const assert = require('chai').assert;
 const aws = require('../lib/aws.js').ContainerAws;
 
 
-describe.skip("AWS Test", function () {
+describe("AWS Test", function () {
     const DELIVERY_TIMEOUT = 30000; // max time to wait for test
     this.timeout(DELIVERY_TIMEOUT); // Timeout length
 
@@ -49,7 +49,7 @@ describe.skip("AWS Test", function () {
     /* Create destination S3 object prefix for run */
     let date = new Date();
     date = `${(date.getMonth() + 1)}-${(date.getDate() + 1)}-${date.getHours()}-${date.getMinutes()}`;
-    const scriptName = __filename.split(`${__dirname}/`).pop();
+    const scriptName = path.basename(__filename);
 
     targetObject = `${targetObject}${scriptName}/${date}/`;
 
