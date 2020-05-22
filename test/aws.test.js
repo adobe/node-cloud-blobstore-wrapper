@@ -258,7 +258,7 @@ describe("AWS Test", function () {
                 assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
 
-            it.only("Missing region", async function () {
+            it("Missing region", async function () {
 
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -315,7 +315,7 @@ describe("AWS Test", function () {
                 assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
 
-            it.only("East Coast Region", async function () {
+            it("East Coast Region", async function () {
 
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -373,7 +373,7 @@ describe("AWS Test", function () {
                 assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
 
-            it.only("Fake region", async function () {
+            it("Fake region", async function () {
 
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -398,7 +398,7 @@ describe("AWS Test", function () {
 
         describe("Positive", function () {
 
-            it.only("Presigning should be valid", async function () {
+            it("Presigning should be valid", async function () {
 
                 let url = sourceStorageContainer.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
@@ -481,7 +481,7 @@ describe("AWS Test", function () {
                 fs.unlinkSync(localDestinationFile);
             });
 
-            it.only("West Coast Region", async function () {
+            it("West Coast Region", async function () {
 
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -514,7 +514,7 @@ describe("AWS Test", function () {
                 fs.unlinkSync(localDestinationFile);
             });
 
-            it.only("EU Region", async function () {
+            it("EU Region", async function () {
 
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,

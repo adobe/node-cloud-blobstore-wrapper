@@ -203,7 +203,7 @@ describe('Cloudstorage Test', function () {
             }
         });
 
-        it.only("#presignPut", function () {
+        it("#presignPut", function () {
 
             const regexAzurePresignedUrlPut = [
                 new RegExp(`^https:\\/\\/${process.env.AZURE_STORAGE_ACCOUNT}\\.blob\\.core\\.windows\\.net/${targetStorageContainerName}/${targetCloudStorageAsset}\\?.*`, "i"),
@@ -244,7 +244,7 @@ describe('Cloudstorage Test', function () {
 
         describe("#upload()", function () {
 
-            it.only("Azure upload from URL", async function () {
+            it("Azure upload from URL", async function () {
                 await azureTargetStorageContainer.upload(azureSourceAssetUrl, targetCloudStorageAsset);
                 const azureUrlResult = await azureTargetStorageContainer.listObjects(targetCloudStorageAsset);
                 assert.ok(azureUrlResult.length > 0);
@@ -260,7 +260,7 @@ describe('Cloudstorage Test', function () {
 
             });
 
-            it.only("Azure upload from local file", async function () {
+            it("Azure upload from local file", async function () {
                 await azureTargetStorageContainer.upload(sourceLocalFile, targetCloudStorageAsset);
                 const azureLocalResult = await azureTargetStorageContainer.listObjects(targetCloudStorageAsset);
                 assert.ok(azureLocalResult.length > 0);
