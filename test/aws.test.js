@@ -24,7 +24,7 @@ const assert = require('chai').assert;
 const aws = require('../lib/aws.js').ContainerAws;
 
 
-describe("AWS Test", function () {
+describe.skip("AWS Test", function () {
     const DELIVERY_TIMEOUT = 30000; // max time to wait for test
     this.timeout(DELIVERY_TIMEOUT); // Timeout length
 
@@ -258,7 +258,7 @@ describe("AWS Test", function () {
                 assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
 
-            it("Missing region", async function () {
+            it.only("Missing region", async function () {
 
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -315,7 +315,7 @@ describe("AWS Test", function () {
                 assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
 
-            it("East Coast Region", async function () {
+            it.only("East Coast Region", async function () {
 
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -373,7 +373,7 @@ describe("AWS Test", function () {
                 assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
 
-            it("Fake region", async function () {
+            it.only("Fake region", async function () {
 
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -398,11 +398,11 @@ describe("AWS Test", function () {
 
         describe("Positive", function () {
 
-            it("Presigning should be valid", async function () {
+            it.only("Presigning should be valid", async function () {
 
                 let url = sourceStorageContainer.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
-console.log("URL", url)
+
                 for (const regex of regexPresignedUrlGet) {
                     assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
                 }
@@ -481,7 +481,7 @@ console.log("URL", url)
                 fs.unlinkSync(localDestinationFile);
             });
 
-            it("West Coast Region", async function () {
+            it.only("West Coast Region", async function () {
 
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -514,7 +514,7 @@ console.log("URL", url)
                 fs.unlinkSync(localDestinationFile);
             });
 
-            it("EU Region", async function () {
+            it.only("EU Region", async function () {
 
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,

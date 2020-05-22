@@ -24,7 +24,7 @@ const assert = require('chai').assert;
 const azure = require('../lib/azure.js').ContainerAzure;
 
 
-describe("Azure Test", function () {
+describe.skip("Azure Test", function () {
 
     const DELIVERY_TIMEOUT = 30000; // max time to wait for test
     this.timeout(DELIVERY_TIMEOUT); // Timeout length
@@ -201,7 +201,7 @@ describe("Azure Test", function () {
 
         describe("Positive", function () {
 
-            it("See if URL syntax is correct", async function () {
+            it.only("See if URL syntax is correct", async function () {
 
                 let url = targetStorageContainer.presignPut(targetBlob, expiry);
                 url = decodeURIComponent(decodeURI(url));
@@ -420,7 +420,7 @@ describe("Azure Test", function () {
 
         describe("Positive", function () {
 
-            it("Upload from local file", async function () {
+            it.only("Upload from local file", async function () {
 
                 await targetStorageContainer.upload(sourceLocalFile, blob);
                 const result = await targetStorageContainer.listObjects(blob);
@@ -432,7 +432,7 @@ describe("Azure Test", function () {
                 assert.isAbove(result[0].contentLength, 0, "Content Length value should be greater than 0");
             });
 
-            it("Upload from URL", async function () {
+            it.only("Upload from URL", async function () {
 
                 await targetStorageContainer.upload(sourceAssetUrl, blob);
                 const result = await targetStorageContainer.listObjects(blob);
@@ -444,7 +444,7 @@ describe("Azure Test", function () {
                 assert.isAbove(result[0].contentLength, 0, "Content Length value should be greater than 0");
             });
 
-            it("Force Multipart with a 500MB+ asset", async function () {
+            it.only("Force Multipart with a 500MB+ asset", async function () {
                 this.timeout(3000000);
                 const sourceObjectLarge = "images/psd/Sunflower-text-500MB.psd";
                 blob = blob.replace("txt", "psd");
