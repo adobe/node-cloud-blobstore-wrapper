@@ -1,8 +1,9 @@
-# node-cloud-blobstore-wrapper
-[![Version](https://img.shields.io/npm/v/@adobe/cloud-blobstore-wrapper.svg)](https://npmjs.org/package/@adobe/cloud-blobstore-wrapper)
+[![Version](https://img.shields.io/npm/v/@adobe/<package-name>.svg)](https://npmjs.org/package/@adobe/cloud-blobstore-wrapper)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![Travis](https://travis-ci.com/adobe/<package-name>.svg?branch=master)](https://travis-ci.com/adobe/node-cloud-blobstore-wrapper)
 
+# Cloud Blob Store Wrapper
 General Cloud Storage library currently for Azure and AWS.
-Currently only supports Linux and macOS.
 
 # Summary
 This is an agnostic wrapper for various cloud storage providers (currently: AWS and Azure) that help with uploading, downloading, generating pre-signed urls, listing objects in storage, storage validation, and retrieve metadata about an object in storage.

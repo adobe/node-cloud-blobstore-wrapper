@@ -1,14 +1,14 @@
 /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
+ * Copyright 2019 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
 /* eslint-env mocha */
 
@@ -52,7 +52,7 @@ describe('Cloudstorage Test', function () {
     /* Create destination blob prefix for run */
     let date = new Date();
     date = `${(date.getMonth() + 1)}-${(date.getDate() + 1)}-${date.getHours()}-${date.getMinutes()}`;
-    const scriptName = __filename.split(`${__dirname}/`).pop();
+    const scriptName = path.basename(__filename);
 
     targetCloudStoragePath = `${targetCloudStoragePath}${scriptName}/${date}/`;
 
@@ -83,7 +83,7 @@ describe('Cloudstorage Test', function () {
             accountName: process.env.AZURE_STORAGE_ACCOUNT,
             accessKeyId: process.env.AWS_ACCESS_KEY,
             secretAccessKey: process.env.AWS_SECRET_KEY
-        }
+        };
 
         azureSourceStorageContainer = new CloudStorage({
             accountKey: process.env.AZURE_STORAGE_KEY,
@@ -231,14 +231,14 @@ describe('Cloudstorage Test', function () {
             azureUrl = decodeURIComponent(decodeURI(azureUrl));
 
             for (const regex of regexAzurePresignedUrlPut) {
-                assert.strictEqual(regex.test(azureUrl), true, `Presigned URL should contain ${regex}`);
+                assert.strictEqual(regex.test(azureUrl), true, `Presigned Azure URL should contain ${regex}`);
             }
 
             let awsUrl = awsTargetStorageContainer.presignPut(targetCloudStorageAsset, expiry);
             awsUrl = decodeURIComponent(decodeURI(awsUrl));
 
             for (const regex of regexAwsPresignedUrlPut) {
-                assert.strictEqual(regex.test(awsUrl), true, `Presigned URL should contain ${regex}`);
+                assert.strictEqual(regex.test(awsUrl), true, `Presigned AWS URL should contain ${regex}`);
             }
         });
 
@@ -299,7 +299,7 @@ describe('Cloudstorage Test', function () {
             assert.strictEqual(awsUrlResult[0].contentLength, awsStats.size, `Local file size ${awsStats.size} should be ${awsUrlResult[0].contentLength}`);
 
             fs.unlinkSync(awsLocalDestinationFile);
-        })
+        });
 
         it("#getMetadata()", async function () {
 

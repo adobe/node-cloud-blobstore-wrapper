@@ -1,14 +1,14 @@
 /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
+ * Copyright 2019 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
 /* eslint-env mocha */
 
@@ -49,7 +49,7 @@ describe("AWS Test", function () {
     /* Create destination S3 object prefix for run */
     let date = new Date();
     date = `${(date.getMonth() + 1)}-${(date.getDate() + 1)}-${date.getHours()}-${date.getMinutes()}`;
-    const scriptName = __filename.split(`${__dirname}/`).pop();
+    const scriptName = path.basename(__filename);
 
     targetObject = `${targetObject}${scriptName}/${date}/`;
 
@@ -74,19 +74,19 @@ describe("AWS Test", function () {
 
         /* Create source storage container object */
         sourceStorageContainer = new aws({
-                accessKeyId: process.env.AWS_ACCESS_KEY,
-                secretAccessKey: process.env.AWS_SECRET_KEY},
-            sourceStorageContainerName,
-            {bucketRegion: containerRegion});
+            accessKeyId: process.env.AWS_ACCESS_KEY,
+            secretAccessKey: process.env.AWS_SECRET_KEY},
+        sourceStorageContainerName,
+        {bucketRegion: containerRegion});
 
         sourceAssetUrl = sourceStorageContainer.presignGet(sourceObject, 600000);
 
         /* Create target storage container object */
         targetStorageContainer = new aws({
-                accessKeyId: process.env.AWS_ACCESS_KEY,
-                secretAccessKey: process.env.AWS_SECRET_KEY},
-            targetStorageContainerName,
-            {bucketRegion: containerRegion});
+            accessKeyId: process.env.AWS_ACCESS_KEY,
+            secretAccessKey: process.env.AWS_SECRET_KEY},
+        targetStorageContainerName,
+        {bucketRegion: containerRegion});
 
         regexPresignedUrlGet = [
             new RegExp(`^https:\\/\\/${sourceStorageContainerName}\\.s3\\.amazonaws\\.com/${sourceObject}\\?.*`, "i"),
@@ -126,7 +126,7 @@ describe("AWS Test", function () {
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
                     secretAccessKey: process.env.AWS_SECRET_KEY},
-                    sourceStorageContainerName);
+                sourceStorageContainerName);
 
                 const result = await container.validate();
                 assert.strictEqual(result, true, result);
@@ -137,11 +137,11 @@ describe("AWS Test", function () {
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
                     secretAccessKey: process.env.AWS_SECRET_KEY},
-                    sourceStorageContainerName,
-                    { bucketRegion: "us-west-1" });
+                sourceStorageContainerName,
+                { bucketRegion: "us-west-1" });
 
-                    const result = await container.validate();
-                    assert.strictEqual(result, true, result);
+                const result = await container.validate();
+                assert.strictEqual(result, true, result);
             });
 
             it("Bucket is an invisible character", async function () {
@@ -149,11 +149,11 @@ describe("AWS Test", function () {
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
                     secretAccessKey: process.env.AWS_SECRET_KEY},
-                    sourceStorageContainerName,
-                    { bucketRegion: "\n" });
+                sourceStorageContainerName,
+                { bucketRegion: "\n" });
 
-                    const result = await container.validate();
-                    assert.strictEqual(result, true, result);
+                const result = await container.validate();
+                assert.strictEqual(result, true, result);
             });
         });
         describe("Negative", function () {
@@ -174,7 +174,7 @@ describe("AWS Test", function () {
                     new aws({
                         accessKeyId: process.env.AWS_ACCESS_KEY,
                         secretAccessKey: "\t"},
-                        sourceStorageContainerName);
+                    sourceStorageContainerName);
 
                 } catch (error) {
                     assert.strictEqual(error, "Authentication was not provided", "Invisible characters should be caught");
@@ -184,7 +184,7 @@ describe("AWS Test", function () {
                     new aws({
                         accessKeyId: process.env.AWS_ACCESS_KEY,
                         secretAccessKey: process.env.AWS_SECRET_KEY},
-                        "\r");
+                    "\r");
 
                 } catch (error) {
                     assert.strictEqual(error, "S3 bucket name was not provided", "Invisible characters should be caught");
@@ -232,8 +232,8 @@ describe("AWS Test", function () {
                     new aws({
                         accessKeyId: process.env.AWS_ACCESS_KEY,
                         secretAccessKey: process.env.AWS_SECRET_KEY},
-                        undefined,
-                        {bucketRegion: containerRegion});
+                    undefined,
+                    {bucketRegion: containerRegion});
                 } catch (error) {
                     assert.strictEqual(error, "S3 bucket name was not provided", "Should fail if AWS S3 bucket was not defined");
                 }
@@ -250,7 +250,7 @@ describe("AWS Test", function () {
                 let url = targetStorageContainer.presignPut(s3Object, expiry);
                 url = decodeURIComponent(decodeURI(url));
                 for (const regex of regexPresignedUrlPut) {
-                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
+                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
                 }
 
                 await targetStorageContainer.upload(sourceLocalFile, s3Object);
@@ -263,7 +263,7 @@ describe("AWS Test", function () {
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
                     secretAccessKey: process.env.AWS_SECRET_KEY},
-                    `${targetStorageContainerName}-frankfurt`);
+                `${targetStorageContainerName}-frankfurt`);
 
                 let url = container.presignPut(s3Object, expiry);
                 url = decodeURIComponent(decodeURI(url));
@@ -278,7 +278,7 @@ describe("AWS Test", function () {
                     new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
                 ];
                 for (const regex of regexDifferentRegion) {
-                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
+                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
                 }
 
                 await container.upload(sourceLocalFile, s3Object);
@@ -291,28 +291,28 @@ describe("AWS Test", function () {
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
                     secretAccessKey: process.env.AWS_SECRET_KEY},
-                    targetStorageContainerName,
-                    { bucketRegion: "eu-central-1" });
+                targetStorageContainerName,
+                { bucketRegion: "eu-central-1" });
 
-                    let url = container.presignPut(s3Object, expiry);
-                    url = decodeURIComponent(decodeURI(url));
+                let url = container.presignPut(s3Object, expiry);
+                url = decodeURIComponent(decodeURI(url));
 
-                    const regexDifferentRegion = [
-                        new RegExp(`^https:\\/\\/${targetStorageContainerName}\\.s3(\\.[a-z]{2}-[a-z]+?-?[0-9]{1})?\\.amazonaws\\.com/${s3Object}\\?.*`, "i"),
-                        new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
-                        new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
-                        new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                        new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
-                        new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
-                        new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
-                    ];
-                    for (const regex of regexDifferentRegion) {
-                        assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
-                    }
+                const regexDifferentRegion = [
+                    new RegExp(`^https:\\/\\/${targetStorageContainerName}\\.s3(\\.[a-z]{2}-[a-z]+?-?[0-9]{1})?\\.amazonaws\\.com/${s3Object}\\?.*`, "i"),
+                    new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
+                    new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
+                    new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
+                    new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
+                    new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
+                    new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
+                ];
+                for (const regex of regexDifferentRegion) {
+                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
+                }
 
-                    await container.upload(sourceLocalFile, s3Object);
-                    const result = await container.listObjects(s3Object);
-                    assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
+                await container.upload(sourceLocalFile, s3Object);
+                const result = await container.listObjects(s3Object);
+                assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
 
             it("East Coast Region", async function () {
@@ -320,28 +320,28 @@ describe("AWS Test", function () {
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
                     secretAccessKey: process.env.AWS_SECRET_KEY},
-                    targetStorageContainerName,
-                    { bucketRegion: "us-east-1" });
+                targetStorageContainerName,
+                { bucketRegion: "us-east-1" });
 
-                    let url = container.presignPut(s3Object, expiry);
-                    url = decodeURIComponent(decodeURI(url));
+                let url = container.presignPut(s3Object, expiry);
+                url = decodeURIComponent(decodeURI(url));
 
-                    const regexDifferentRegion = [
-                        new RegExp(`^https:\\/\\/${targetStorageContainerName}\\.s3(\\.[a-z]{2}-[a-z]+?-?[0-9]{1})?\\.amazonaws\\.com/${s3Object}\\?.*`, "i"),
-                        new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
-                        new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
-                        new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                        new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
-                        new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
-                        new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
-                    ];
-                    for (const regex of regexDifferentRegion) {
-                        assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
-                    }
+                const regexDifferentRegion = [
+                    new RegExp(`^https:\\/\\/${targetStorageContainerName}\\.s3(\\.[a-z]{2}-[a-z]+?-?[0-9]{1})?\\.amazonaws\\.com/${s3Object}\\?.*`, "i"),
+                    new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
+                    new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
+                    new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
+                    new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
+                    new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
+                    new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
+                ];
+                for (const regex of regexDifferentRegion) {
+                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
+                }
 
-                    await container.upload(sourceLocalFile, s3Object);
-                    const result = await container.listObjects(s3Object);
-                    assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
+                await container.upload(sourceLocalFile, s3Object);
+                const result = await container.listObjects(s3Object);
+                assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
 
             it("West Coast Region", async function () {
@@ -349,28 +349,28 @@ describe("AWS Test", function () {
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
                     secretAccessKey: process.env.AWS_SECRET_KEY},
-                    targetStorageContainerName,
-                    { bucketRegion: "us-west-1" });
+                targetStorageContainerName,
+                { bucketRegion: "us-west-1" });
 
-                    let url = container.presignPut(s3Object, expiry);
-                    url = decodeURIComponent(decodeURI(url));
+                let url = container.presignPut(s3Object, expiry);
+                url = decodeURIComponent(decodeURI(url));
 
-                    const regexDifferentRegion = [
-                        new RegExp(`^https:\\/\\/${targetStorageContainerName}\\.s3(\\.[a-z]{2}-[a-z]+?-?[0-9]{1})?\\.amazonaws\\.com/${s3Object}\\?.*`, "i"),
-                        new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
-                        new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
-                        new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
-                        new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
-                        new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
-                        new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
-                    ];
-                    for (const regex of regexDifferentRegion) {
-                        assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
-                    }
+                const regexDifferentRegion = [
+                    new RegExp(`^https:\\/\\/${targetStorageContainerName}\\.s3(\\.[a-z]{2}-[a-z]+?-?[0-9]{1})?\\.amazonaws\\.com/${s3Object}\\?.*`, "i"),
+                    new RegExp('.*X-Amz-Algorithm=AWS4-HMAC-SHA256.*', "i"),
+                    new RegExp('.*&X-Amz-Credential=[A-Z0-9]{20}/[0-9]{8}/[a-z]{2}-[a-z]+?-?[0-9]{1}/s3/aws4_request.*', "i"),
+                    new RegExp('.*&X-Amz-Date=[0-9]{8}T[0-9]{6}Z.*', "i"),
+                    new RegExp(`.*&X-Amz-Expires=${expiry/1000}.*`, "i"),
+                    new RegExp('.*&X-Amz-Signature=[a-f0-9]+.*', "i"),
+                    new RegExp('.*&X-Amz-SignedHeaders=host.*', "i")
+                ];
+                for (const regex of regexDifferentRegion) {
+                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
+                }
 
-                    await container.upload(sourceLocalFile, s3Object);
-                    const result = await container.listObjects(s3Object);
-                    assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
+                await container.upload(sourceLocalFile, s3Object);
+                const result = await container.listObjects(s3Object);
+                assert.strictEqual(result[0].name, s3Object, `Uploaded S3 Object ${result[0].name} should exist in destination: ${s3Object}`);
             });
 
             it("Fake region", async function () {
@@ -384,7 +384,7 @@ describe("AWS Test", function () {
                 let url = container.presignPut(s3Object, expiry);
                 url = decodeURIComponent(decodeURI(url));
                 for (const regex of regexPresignedUrlPut) {
-                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`)
+                    assert.strictEqual(regex.test(url), true, `Presigned URL should contain ${regex}`);
                 }
 
                 await container.upload(sourceLocalFile, s3Object);
@@ -453,8 +453,8 @@ describe("AWS Test", function () {
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
                     secretAccessKey: process.env.AWS_SECRET_KEY},
-                    sourceStorageContainerName,
-                    { bucketRegion: "us-east-1" });
+                sourceStorageContainerName,
+                { bucketRegion: "us-east-1" });
 
                 let url = container.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
@@ -486,8 +486,8 @@ describe("AWS Test", function () {
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
                     secretAccessKey: process.env.AWS_SECRET_KEY},
-                    sourceStorageContainerName,
-                    { bucketRegion: "us-west-1" });
+                sourceStorageContainerName,
+                { bucketRegion: "us-west-1" });
 
                 let url = await container.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
@@ -519,8 +519,8 @@ describe("AWS Test", function () {
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
                     secretAccessKey: process.env.AWS_SECRET_KEY},
-                    `${sourceStorageContainerName}-frankfurt`,
-                    { bucketRegion: "eu-central-1" });
+                `${sourceStorageContainerName}-frankfurt`,
+                { bucketRegion: "eu-central-1" });
 
                 let url = container.presignGet(sourceObject, expiry);
                 url = decodeURIComponent(decodeURI(url));
@@ -652,7 +652,7 @@ describe("AWS Test", function () {
         it("Negative", async function () {
 
             const s3ObjectName = "fakeS3Object";
-            assert.strictEqual(await sourceStorageContainer.getMetadata(s3ObjectName), undefined, "Non existent object should return no metadata")
+            assert.strictEqual(await sourceStorageContainer.getMetadata(s3ObjectName), undefined, "Non existent object should return no metadata");
         });
     });
 
@@ -853,7 +853,7 @@ describe("AWS Test", function () {
 
                 } catch (error) {
                     assert.isDefined(error, "Error should be thrown");
-                    assert.strictEqual(error.code, "ECONNREFUSED")
+                    assert.strictEqual(error.code, "ECONNREFUSED");
                     assert.strictEqual(error.message, `request to ${url}/ failed, reason: connect ECONNREFUSED 127.0.0.1:443`, "Error message should match");
                 }
             }).timeout(70000);
