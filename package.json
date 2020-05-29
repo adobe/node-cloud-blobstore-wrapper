@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "Cloud Storage library",
   "dependencies": {
-    "@azure/storage-blob": "^10.5.0",
     "@adobe/node-fetch-retry": "^1.0.1",
+    "@azure/storage-blob": "^10.5.0",
     "fs-extra": "^9.0.0",
-    "valid-url": "^1.0.9"
+    "valid-url": "^1.0.9",
+    "xmlhttprequest-ssl": "^1.6.0"
   },
   "author": "Adobe Inc.",
   "license": "Apache-2.0",
