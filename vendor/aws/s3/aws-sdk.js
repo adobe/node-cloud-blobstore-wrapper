@@ -1,6 +1,3 @@
-var XMLHttpRequest = require("xmlhttprequest-ssl").XMLHttpRequest;
-var xhr = new XMLHttpRequest();
-
 // AWS SDK for JavaScript v2.686.0
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // License at https://sdk.amazonaws.com/js/BUNDLE_LICENSE.txt
