@@ -17,7 +17,8 @@
 # Doc link: https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/building-sdk-for-browsers.html#using-command-line-tools
 
 # Clone aws-sdk repo
-git clone git://github.com/aws/aws-sdk-js
+git clone git@github.com:tmathern/aws-sdk-js.git
+git checkout build-for-node
 cd aws-sdk-js
 
 # Choose version
