@@ -27,7 +27,7 @@ git checkout v.2.686.0
 
 # Select service to use and build
 npm i
-node dist-tools/browser-builder.js s3 > ./../vendor/aws/s3/aws-sdk.js
+node dist-tools/node-builder.js s3 > ./../vendor/aws/s3/aws-sdk.js
 
 # remove build folders
 cd ..
