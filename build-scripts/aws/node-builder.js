@@ -27,6 +27,9 @@ function minify(code) {
     return minified.code;
 }
 
+// Inspired by https://github.com/aws/aws-sdk-js/blob/master/dist-tools/browser-builder.js
+// Tool to build aws-sdk for browser https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/building-sdk-for-browsers.html
+
 function build(options, callback) {
     if (arguments.length === 1) {
         callback = options;
