@@ -39,6 +39,7 @@ function build(options, callback) {
     img.vars.process = function () { return '{browser:false}'; };
     if (options.services) process.env.AWS_SERVICES = options.services;
 
+    // settings for a node-like build
     const brOpts = {
         basedir: path.resolve(__dirname, '../../node_modules/aws-sdk'),
         standalone: STANDALONE_IDENTIFIER,
