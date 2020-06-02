@@ -19,7 +19,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
 
-const assert = require('chai').assert;
+const assert = require('assert');
 
 const { CloudStorage } = require('../lib/cloudstorage.js');
 
@@ -316,7 +316,5 @@ describe('Cloudstorage Test', function () {
             assert.strictEqual(awsMetadata.contentLength, expectedLength, `Asset Content Length is ${awsMetadata.contentLength} but should be equal to ${expectedLength}`);
             assert.strictEqual(awsMetadata.name, assetName, `Asset Name is ${awsMetadata.name} but should be equal to ${assetName}`);
         });
-
-
     });
 });

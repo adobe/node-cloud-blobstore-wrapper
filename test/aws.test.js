@@ -19,10 +19,9 @@ const os = require('os');
 const fs = require('fs');
 
 const yaml = require('js-yaml');
-const assert = require('chai').assert;
+const assert = require('assert');
 
 const aws = require('../lib/aws.js').ContainerAws;
-
 
 describe("AWS Test", function () {
     const DELIVERY_TIMEOUT = 30000; // max time to wait for test
@@ -290,7 +289,8 @@ describe("AWS Test", function () {
 
                 const container = new aws({
                     accessKeyId: process.env.AWS_ACCESS_KEY,
-                    secretAccessKey: process.env.AWS_SECRET_KEY},
+                    secretAccessKey: process.env.AWS_SECRET_KEY
+                },
                 targetStorageContainerName,
                 { bucketRegion: "eu-central-1" });
 

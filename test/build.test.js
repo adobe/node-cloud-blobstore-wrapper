@@ -17,12 +17,12 @@
 // verifies vendor build
 
 const S3 = require('../vendor/aws/aws-sdk').S3;
-const assert = require('chai').assert;
+const assert = require('assert');
 
 describe("AWS S3 build", function () { 
     it("Can instantiate S3", () => {    
         const s3 = new S3();
-        assert.isDefined(s3);
-        assert.isNotNull(s3);
+        assert.ok(s3 !== undefined);
+        assert.ok(s3 !== null);
     });
 });
