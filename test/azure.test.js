@@ -19,7 +19,7 @@ const os = require('os');
 const fs = require('fs');
 
 const yaml = require('js-yaml');
-const assert = require('assert');
+const assert = require('chai').assert;
 
 const azure = require('../lib/azure.js').ContainerAzure;
 
