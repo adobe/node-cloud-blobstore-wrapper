@@ -13,22 +13,4 @@
 #
 
 # #### Build AWS SDK Client for S3
-
-# Doc link: https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/building-sdk-for-browsers.html#using-command-line-tools
-
-# Clone aws-sdk repo
-git clone git@github.com:tmathern/aws-sdk-js.git
-git checkout build-for-node
-cd aws-sdk-js
-
-# Choose version
-# TODO: turn into env variable
-git checkout v.2.686.0
-
-# Select service to use and build
-npm i
-node dist-tools/node-builder.js s3 > ./../vendor/aws/s3/aws-sdk.js
-
-# remove build folders
-cd ..
-git rm -rf aws-sdk-js
+node aws/node-builder.js s3 > ./../vendor/aws/s3/aws-sdk.js

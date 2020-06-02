@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+'use strict';
+
 const path = require('path');
 const uglify = require('uglify-js');
 const img = require('insert-module-globals');
@@ -9,7 +11,7 @@ const awsLicense = require('aws-sdk/dist-tools/browser-builder').license;
 const STANDALONE_IDENTIFIER = 'AWS'; // namespace for built lib
 
 function minify(code) {
-    var minified = uglify.minify(code, { fromString: true });
+    const minified = uglify.minify(code, { fromString: true });
     return minified.code;
 }
 
@@ -22,7 +24,7 @@ function build(options, callback) {
     img.vars.process = function () { return '{browser:false}'; };
     if (options.services) process.env.AWS_SERVICES = options.services;
 
-    let brOpts = {
+    const brOpts = {
         basedir: path.resolve(__dirname, '../../node_modules/aws-sdk'),
         standalone: STANDALONE_IDENTIFIER,
         detectGlobals: false,
@@ -42,19 +44,19 @@ function build(options, callback) {
         .add('./')
         .ignore('domain')
         .bundle(function (err, data) {
-        if (err) return callback(err);
+            if (err) return callback(err);
 
-        var code = (data || '').toString();
-        if (options.minify) code = minify(code);
+            let code = (data || '').toString();
+            if (options.minify) code = minify(code);
 
-        code = awsLicense + code;
-        callback(null, code);
-    });
+            code = awsLicense + code;
+            callback(null, code);
+        });
 }
 
 // run if we called this tool directly
 if (require.main === module) {
-    var opts = {
+    const opts = {
         services: process.argv[2] || process.env.SERVICES,
         minify: process.env.MINIFY ? true : false
     };
