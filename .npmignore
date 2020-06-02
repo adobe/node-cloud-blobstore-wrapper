@@ -21,3 +21,6 @@ build/
 
 # pipeline release config
 .releaserc.json
+
+## `prepare` script additions: 
+# - vendor/aws/s3/*
