@@ -20,7 +20,7 @@ const S3 = require('./../vendor/aws/s3/aws-sdk').S3;
 const assert = require('chai').assert;
 
 describe("AWS S3 build", function () { 
-    it("Can instantiate S3", () => {    
+    it.only("Can instantiate S3", () => {    
         const s3 = new S3();
         assert.isDefined(s3);
         assert.isNotNull(s3);
