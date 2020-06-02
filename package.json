@@ -22,6 +22,7 @@
     "chai": "^4.2.0",
     "codecov": "^3.7.0",
     "expect": "^26.0.1",
+    "insert-module-globals": "^7.2.0",
     "mocha": "^7.2.0",
     "nyc": "^15.0.1",
     "uglify": "^0.1.5"

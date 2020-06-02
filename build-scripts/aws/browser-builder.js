@@ -2,6 +2,7 @@
 
 const path = require('path');
 const uglify = require('uglify-js');
+const img = require('insert-module-globals');
 const browserify = require('browserify');
 const awsLicense = require('aws-sdk/dist-tools/browser-builder').license;
 
@@ -18,8 +19,7 @@ function build(options, callback) {
         options = {};
     }
 
-    img.vars.process = function () { return '{browser:true}'; };
-
+    img.vars.process = function () { return '{browser:false}'; };
     if (options.services) process.env.AWS_SERVICES = options.services;
 
     let brOpts = {
@@ -38,7 +38,10 @@ function build(options, callback) {
         }
     };
 
-    browserify(brOpts).add('./').ignore('domain').bundle(function (err, data) {
+    browserify(brOpts)
+        .add('./')
+        .ignore('domain')
+        .bundle(function (err, data) {
         if (err) return callback(err);
 
         var code = (data || '').toString();
@@ -61,5 +64,4 @@ if (require.main === module) {
     });
 }
 
-build.license = license;
 module.exports = build;
