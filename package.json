@@ -40,6 +40,7 @@
     "test": "nyc mocha --recursive --exit",
     "posttest": "eslint .",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "beautify": "eslint . --fix"
+    "beautify": "eslint . --fix",
+    "prepare": "build-scripts/aws/node-builder.js s3 > vendor/aws/s3/aws-sdk.js"
   }
 }
