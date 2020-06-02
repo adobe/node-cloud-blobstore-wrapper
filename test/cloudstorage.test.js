@@ -19,7 +19,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
 
-const assert = require('assert');
+const assert = require('chai').assert;
 
 const { CloudStorage } = require('../lib/cloudstorage.js');
 
