@@ -40,7 +40,7 @@
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "beautify": "eslint . --fix",
     "mkdirs": "mkdir -p vendor/aws/",
-    "build-vendor-aws": "build-scripts/aws/node-builder.js s3 > vendor/aws/aws-sdk.js",
+    "build-vendor-aws": "build-scripts/aws/node-builder.js",
     "prepare": "npm run mkdirs && npm run build-vendor-aws"
   }
 }

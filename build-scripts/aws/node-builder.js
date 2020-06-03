@@ -73,12 +73,14 @@ function build(options, callback) {
 // run if we called this tool directly
 if (require.main === module) {
     const opts = {
-        services: process.argv[2] || process.env.USED_AWS_SERVICES,
-        minify: true
+        services: process.env.USED_AWS_SERVICES || 's3',
+        minify: process.env.MINIFY || true
     };
     build(opts, function (err, code) {
         if (err) console.error(err.message);
-        else console.log(code);
+        else {
+            console.log(typeof code);
+        }
     });
 }
 
