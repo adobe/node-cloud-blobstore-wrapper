@@ -44,7 +44,7 @@ function build(options, callback) {
 
     // settings for a node-like build
     const brOpts = {
-        basedir: path.resolve(__dirname, '../../node_modules/aws-sdk'),
+        basedir: path.resolve(__dirname, '..', '..', 'node_modules', 'aws-sdk'),
         standalone: STANDALONE_IDENTIFIER,
         detectGlobals: false,
         browserField: false,
