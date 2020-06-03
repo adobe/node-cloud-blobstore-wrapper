@@ -23,7 +23,7 @@ const browserify = require('browserify');
 const awsLicense = require('aws-sdk/dist-tools/browser-builder').license;
 
 const STANDALONE_IDENTIFIER = 'AWS'; // namespace for built lib
-const BUILD_FILE_PATH = './vendor/aws/aws-sdk.js';
+const BUILD_FILE_PATH = './build/aws/aws-sdk.js';
 
 function minify(code) {
     const minified = uglify.minify(code, { fromString: true });
