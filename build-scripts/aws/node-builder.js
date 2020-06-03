@@ -23,7 +23,7 @@ const browserify = require('browserify');
 const awsLicense = require('aws-sdk/dist-tools/browser-builder').license;
 
 const STANDALONE_IDENTIFIER = 'AWS'; // namespace for built lib
-const BUILD_FILE_PATH = './build/aws/aws-sdk.js';
+const BUILD_FILE_PATH = path.normalize('vendor/aws/aws-sdk.js');
 
 function minify(code) {
     const minified = uglify.minify(code, { fromString: true });
@@ -44,7 +44,7 @@ function build(options, callback) {
 
     // settings for a node-like build
     const brOpts = {
-        basedir: path.resolve(__dirname, '../../node_modules/aws-sdk'),
+        basedir: path.resolve(__dirname, '..', '..', 'node_modules', 'aws-sdk'),
         standalone: STANDALONE_IDENTIFIER,
         detectGlobals: false,
         browserField: false,
