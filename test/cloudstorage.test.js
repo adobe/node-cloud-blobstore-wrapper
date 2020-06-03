@@ -23,7 +23,7 @@ const assert = require('chai').assert;
 
 const { CloudStorage } = require('../lib/cloudstorage.js');
 
-describe('Cloudstorage Test', function () {
+describe.only('Cloudstorage Test', function () {
 
     const DELIVERY_TIMEOUT = 30000; // max time to wait for test
     this.timeout(DELIVERY_TIMEOUT); // Timeout length

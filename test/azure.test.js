@@ -24,7 +24,7 @@ const assert = require('chai').assert;
 const azure = require('../lib/azure.js').ContainerAzure;
 
 
-describe("Azure Test", function () {
+describe.only("Azure Test", function () {
 
     const DELIVERY_TIMEOUT = 30000; // max time to wait for test
     this.timeout(DELIVERY_TIMEOUT); // Timeout length
