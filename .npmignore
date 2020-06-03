@@ -9,6 +9,7 @@ Jenkinsfile
 .eslintignore
 stryker.conf.js
 build/
+build-scripts/
 .travis.yml
 
 # npm pack leftovers
@@ -21,3 +22,6 @@ build/
 
 # pipeline release config
 .releaserc.json
+
+## `prepare` script additions: 
+# - vendor/aws/s3/*

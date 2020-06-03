@@ -316,7 +316,5 @@ describe('Cloudstorage Test', function () {
             assert.strictEqual(awsMetadata.contentLength, expectedLength, `Asset Content Length is ${awsMetadata.contentLength} but should be equal to ${expectedLength}`);
             assert.strictEqual(awsMetadata.name, assetName, `Asset Name is ${awsMetadata.name} but should be equal to ${assetName}`);
         });
-
-
     });
 });

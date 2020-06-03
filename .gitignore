@@ -55,6 +55,9 @@ typings/
 # next.js build output
 .next
 
+# vendor files
+vendor/
+
 # Visual Studio Code configuration
 .vscode
 !.vscode/launch.json
