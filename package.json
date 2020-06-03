@@ -39,7 +39,7 @@
     "posttest": "eslint .",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "beautify": "eslint . --fix",
-    "build-vendor-aws": "build-scripts/aws/node-builder.js",
+    "build-vendor-aws": "node ./build-scripts/aws/node-builder.js",
     "prepare": "npm run build-vendor-aws"
   }
 }
