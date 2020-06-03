@@ -16,7 +16,7 @@
 
 // verifies vendor build
 
-const S3 = require('../build/aws/aws-sdk').S3;
+const S3 = require('../vendor/aws/aws-sdk').S3;
 const assert = require('assert');
 
 describe("AWS S3 build", function () { 
