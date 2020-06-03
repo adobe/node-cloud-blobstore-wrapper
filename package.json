@@ -39,8 +39,7 @@
     "posttest": "eslint .",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "beautify": "eslint . --fix",
-    "mkdirs": "mkdir -p vendor/aws/",
     "build-vendor-aws": "build-scripts/aws/node-builder.js",
-    "prepare": "npm run mkdirs && npm run build-vendor-aws"
+    "prepare": "npm run build-vendor-aws"
   }
 }
