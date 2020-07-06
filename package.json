@@ -1,7 +1,7 @@
 {
   "name": "@adobe/cloud-blobstore-wrapper",
   "version": "1.1.0",
-  "description": "Cloud Storage library",
+  "description": "Cloud Storage library_cicd",
   "dependencies": {
     "@adobe/node-fetch-retry": "^1.0.1",
     "@azure/storage-blob": "^10.5.0",
