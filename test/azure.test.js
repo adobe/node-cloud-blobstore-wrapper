@@ -261,7 +261,8 @@ describe("Azure Test", function () {
 
     describe("#validate()", function () {
 
-        it("Positive", async function () {
+        it("Positive $$$$$$$$$$$$$$", async function () {
+            console.log("NEW RUN $$$$$$$$$$$$$$");
             assert.strictEqual(await targetStorageContainer.validate(), true);
         });
 
