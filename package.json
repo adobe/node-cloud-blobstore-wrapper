@@ -4,7 +4,7 @@
   "description": "Cloud Storage library",
   "dependencies": {
     "@adobe/node-fetch-retry": "^1.0.1",
-    "@azure/storage-blob": "^10.5.0",
+    "@azure/storage-blob": "10.5.0",
     "fs-extra": "^9.0.1",
     "valid-url": "^1.0.9"
   },
