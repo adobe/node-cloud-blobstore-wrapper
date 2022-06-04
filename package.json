@@ -5,7 +5,7 @@
   "dependencies": {
     "@adobe/node-fetch-retry": "^2.0.0",
     "@azure/storage-blob": "^10.5.0",
-    "fs-extra": "^9.0.1",
+    "fs-extra": "^10.0.0",
     "valid-url": "^1.0.9"
   },
   "author": "Adobe Inc.",
