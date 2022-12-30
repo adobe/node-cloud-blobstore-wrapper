@@ -24,7 +24,7 @@
     "conventional-changelog-eslint": "^3.0.9",
     "insert-module-globals": "^7.2.0",
     "license-checker": "^25.0.1",
-    "mocha": "^7.2.0",
+    "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "semantic-release": "^17.3.0",
     "uglify": "^0.1.5"
